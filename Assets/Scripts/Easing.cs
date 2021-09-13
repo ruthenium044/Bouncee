@@ -13,35 +13,35 @@ public class Easing : MonoBehaviour
     }
     [SerializeField] private EaseStyle easeStyle;
 
-    delegate void EaseFunction(float a, float b, float t);
+    delegate float EaseFunction(float a, float b, float t);
+    private EaseFunction easeFunction;
     
-    [SerializeField] private float start;
-    [SerializeField] private float end;
+    [SerializeField] private Vector3 start;
+    [SerializeField] private Vector3 end;
 
     void Start()
     {
-        
+        SetEase(easeFunction);
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Keypad0))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            StartCoroutine(Ease(start, end));
+            StartCoroutine(EaseSelected(easeFunction, start, end));
         }
     }
 
-    private IEnumerator Ease(float startPos, float endPos)
+    private IEnumerator EaseSelected(EaseFunction ease,Vector3 startPos, Vector3 endPos)
     {
         float t = 0;
         while (t < 1.0f)
-        { //here call function acording to the ease style somehow
-            float ease = EaseInOutSine(startPos, endPos, t);
-            transform.position = new Vector3(transform.position.x, ease, transform.position.z);
+        {
+            transform.position = Ease(ease, startPos, endPos, t);
             t += Time.unscaledDeltaTime;
             yield return null;
         }
-        transform.position = new Vector3(transform.position.x, endPos, transform.position.z);;
+        transform.position = endPos;
     }
 
     float EaseLinear(float a, float b, float t)
@@ -67,9 +67,41 @@ public class Easing : MonoBehaviour
         return EaseLinear(a, b, t);
     }
     
-    //converter lates
-    //Vector2 EaseVector2(Vector2 a, Vector2 b, float t)
-    //{
-    //    return new Vector2(EaseIn(a.x, b.x, t), EaseIn(a.y, b.y, t));
-    //}
+    //converters
+    private float Ease(EaseFunction ease, float a, float b, float t)
+    {
+        return ease(a, b, t);
+    }
+    
+    private Vector2 Ease(EaseFunction ease, Vector2 a, Vector2 b, float t)
+    {
+        return new Vector2(ease(a.x, b.x, t), ease(a.y, b.y, t));
+    }
+    
+    private Vector3 Ease(EaseFunction ease,Vector3 a, Vector3 b, float t)
+    {
+        return new Vector3(ease(a.x, b.x, t), ease(a.y, b.y, t), ease(a.z, b.z, t));
+    }
+
+    private EaseFunction SetEase(EaseFunction ease)
+    {
+        switch (easeStyle)
+        {
+            case EaseStyle.EaseLinear:
+                ease = EaseLinear;
+                break;
+            case EaseStyle.EaseInSine:
+                ease = EaseInSine;
+                break;
+            case EaseStyle.EaseOutSine:
+                ease = EaseOutSine;
+                break;
+            case EaseStyle.EaseInOutSine:
+                ease = EaseInOutSine;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+        return ease;
+    }
 }
