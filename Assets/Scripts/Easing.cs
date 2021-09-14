@@ -9,7 +9,25 @@ public class Easing : MonoBehaviour
         EaseLinear,
         EaseInSine,
         EaseOutSine,
-        EaseInOutSine
+        EaseInOutSine,
+        EaseInCircular,
+        EaseOutCircular,
+        EaseInOutCircular,
+        EaseInExpo,
+        EaseOutExpo,
+        EaseInOutExpo,
+        EaseInQuad,
+        EaseOutQuad,
+        EaseInOutQuad,
+        EaseInCub,
+        EaseOutCub,
+        EaseInOutCub,
+        EaseInQuart,
+        EaseOutQuart,
+        EaseInOutQuart,
+        EaseInQuint,
+        EaseOutQuint,
+        EaseInOutQuint
     }
     [SerializeField] private EaseStyle easeStyle;
 
@@ -66,6 +84,97 @@ public class Easing : MonoBehaviour
         t = (1 + Mathf.Sin(((t - 0.5f) * Mathf.PI))) / 2;
         return EaseLinear(a, b, t);
     }
+
+    float EaseInCircular(float a, float b, float t)
+    {
+        return EaseLinear(a, b, t);
+    }
+    
+    float EaseOutCircular(float a, float b, float t)
+    {
+        return EaseLinear(a, b, t);
+    }
+    
+    float EaseInOutCircular(float a, float b, float t)
+    {
+        return EaseLinear(a, b, t); 
+    }
+    
+    float EaseInExpo(float a, float b, float t)
+    {
+        return EaseLinear(a, b, t);
+    }
+    
+    float EaseOutExpo(float a, float b, float t)
+    {
+        return EaseLinear(a, b, t);
+    }
+    
+    float EaseInOutExpo(float a, float b, float t)
+    {
+        return EaseLinear(a, b, t);
+    }
+    
+    float EaseInQuad(float a, float b, float t)
+    {
+        return EaseLinear(a, b, t);
+    }
+
+    float EaseOutQuad(float a, float b, float t)
+    {
+        return EaseLinear(a, b, t);
+    }
+
+    float EaseInOutQuad(float a, float b, float t)
+    {
+        return EaseLinear(a, b, t);
+    }
+
+    float EaseInCub(float a, float b, float t)
+    {
+        return EaseLinear(a, b, t);
+    }
+
+    float EaseOutCub(float a, float b, float t)
+    {
+        return EaseLinear(a, b, t);
+    }
+    
+    float EaseInOutCub(float a, float b, float t)
+    {
+        return EaseLinear(a, b, t);
+    }
+
+    float EaseInQuart(float a, float b, float t)
+    {
+        return EaseLinear(a, b, t);
+    }
+
+    float EaseOutQuart(float a, float b, float t)
+    {
+        return EaseLinear(a, b, t);
+    }
+
+    float EaseInOutQuart(float a, float b, float t)
+    {
+        return EaseLinear(a, b, t);
+    }
+
+    float EaseInQuint(float a, float b, float t)
+    {
+        return EaseLinear(a, b, t);
+    }
+
+    float EaseOutQuint(float a, float b, float t)
+    {
+        return EaseLinear(a, b, t);
+    }
+
+    float EaseInOutQuint(float a, float b, float t)
+    {
+        return EaseLinear(a, b, t);
+    }
+
     
     //converters
     private float Ease(EaseFunction ease, float a, float b, float t)
@@ -98,6 +207,42 @@ public class Easing : MonoBehaviour
                 break;
             case EaseStyle.EaseInOutSine:
                 ease = EaseInOutSine;
+                break;
+            case EaseStyle.EaseInCircular:
+                break;
+            case EaseStyle.EaseOutCircular:
+                break;
+            case EaseStyle.EaseInOutCircular:
+                break;
+            case EaseStyle.EaseInExpo:
+                break;
+            case EaseStyle.EaseOutExpo:
+                break;
+            case EaseStyle.EaseInOutExpo:
+                break;
+            case EaseStyle.EaseInQuad:
+                break;
+            case EaseStyle.EaseOutQuad:
+                break;
+            case EaseStyle.EaseInOutQuad:
+                break;
+            case EaseStyle.EaseInCub:
+                break;
+            case EaseStyle.EaseOutCub:
+                break;
+            case EaseStyle.EaseInOutCub:
+                break;
+            case EaseStyle.EaseInQuart:
+                break;
+            case EaseStyle.EaseOutQuart:
+                break;
+            case EaseStyle.EaseInOutQuart:
+                break;
+            case EaseStyle.EaseInQuint:
+                break;
+            case EaseStyle.EaseOutQuint:
+                break;
+            case EaseStyle.EaseInOutQuint:
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
