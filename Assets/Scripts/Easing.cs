@@ -189,7 +189,17 @@ public class Easing : MonoBehaviour
     
     float EaseInOutCircular(float a, float b, float t)
     {
-        t = t <= 0.5f ? 0.5f - Mathf.Sqrt(0.25f - t * t) : Mathf.Sqrt(0.25f - Mathf.Pow(2, (t - 1))) + 0.5f;
+        t = t < 0.5f ? 0.5f - Mathf.Sqrt(0.25f - t * t) : Mathf.Sqrt(0.25f - Mathf.Pow(2, (t - 1))) + 0.5f;
+        
+        //if (t < 0.5f)
+        //{
+        //    t = 0.5f - Mathf.Sqrt(0.25f - t * t);
+        //}
+        //else if (t > 0.5f)
+        //{
+        //    t = Mathf.Sqrt(0.25f - Mathf.Pow(2, (t - 1))) + 0.5f;
+        //}
+        
         return EaseLinear(a, b, t);
     }
     

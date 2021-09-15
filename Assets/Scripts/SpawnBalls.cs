@@ -13,7 +13,7 @@ public class SpawnBalls : MonoBehaviour
         float paddingY = 4;
         for (int x = 0; x < 12; x++)
         {
-            for (int y = 0; y < 2; y++)
+            for (int y = 0; y < 1; y++)
             {
                 GameObject temp = Instantiate(ballPrefab, transform);
                 temp.transform.position =
