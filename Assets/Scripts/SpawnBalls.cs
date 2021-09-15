@@ -8,21 +8,16 @@ public class SpawnBalls : MonoBehaviour
     
     void Start()
     {
-        float offsetX = 5.5f;
-        float offsetY = 0;
-        float paddingY = 4;
-        for (int x = 0; x < 12; x++)
+        float offsetX = 10.5f;
+
+        for (int x = 0; x < 21; x++)
         {
-            for (int y = 0; y < 1; y++)
-            {
-                GameObject temp = Instantiate(ballPrefab, transform);
-                temp.transform.position =
-                    new Vector3(transform.position.x + x - offsetX, transform.position.y + y * paddingY - offsetY, transform.position.z);
-                float num = y * paddingY - offsetY;
-                temp.GetComponent<Easing>().Start1 = num;
-                temp.GetComponent<Easing>().End = num - 4;
-                temp.GetComponent<Easing>().SetEase((Easing.EaseStyle) (x * 2 + y));
-            }
+            GameObject temp = Instantiate(ballPrefab, transform);
+            temp.transform.position =
+                new Vector3(transform.position.x + x - offsetX, -2, transform.position.z);
+            temp.GetComponent<Easing>().StartValue = -2;
+            temp.GetComponent<Easing>().EndValue = 2;
+            temp.GetComponent<Easing>().SetEase((Easing.EaseStyle) (x));
         }
     }
 
