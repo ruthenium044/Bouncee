@@ -9,14 +9,6 @@ public class SpawnBalls : MonoBehaviour
 {
     [SerializeField] private GameObject ballPrefab;
     
-    struct FunctionPack
-    {
-        public Easing.Function inFunc;
-        public Easing.Function outFunc;
-        public Easing.Function inOutFunc;
-	}
-    List<FunctionPack> packs = new List<FunctionPack>();
-
     void Start()
     {
         float offsetX = -12f;
@@ -24,23 +16,6 @@ public class SpawnBalls : MonoBehaviour
         int width = 12;
         int paddingX = 5; //todo how to make this padding every 3rd. 
         int paddingY = -6;
-
-        Dictionary<string, FunctionPack> dictionary = new Dictionary<string, FunctionPack>();
-        var names = Enum.GetNames(typeof(Easing.Function));
-        foreach(var name in names) 
-        {
-            if(name.Contains("InOut")) {
-
-			}
-            else if(name.Contains("In")) {
-
-			}
-            else if (name.Contains("Out")) {
-
-            }
-        }
-        
-
 
         for (int i = 0; i < (int) Easing.Style.Count; i++)
         {
