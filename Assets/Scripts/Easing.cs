@@ -1,284 +1,237 @@
 using System;
 using UnityEngine;
+using System.Collections;
 
-public class Easing : MonoBehaviour
+public static class Easing 
 {
-    public enum EaseStyle
+    public delegate float Function(float a, float b, float t);
+
+    public enum Style
     {
-        EaseLinear,
-        EaseInSine,
-        EaseOutSine,
-        EaseInOutSine,
-        EaseInCircular,
-        EaseOutCircular,
-        EaseInOutCircular,
-        EaseInExpo,
-        EaseOutExpo,
-        EaseInOutExpo,
-        EaseInQuad,
-        EaseOutQuad,
-        EaseInOutQuad,
-        EaseInCub,
-        EaseOutCub,
-        EaseInOutCub,
-        EaseInQuart,
-        EaseOutQuart,
-        EaseInOutQuart,
-        EaseInQuint,
-        EaseOutQuint,
-        EaseInOutQuint,
+        Linear,
+        InSine,
+        OutSine,
+        InOutSine,
+        InCircular,
+        OutCircular,
+        InOutCircular,
+        InExpo,
+        OutExpo,
+        InOutExpo,
+        InQuad,
+        OutQuad,
+        InOutQuad,
+        InCub,
+        OutCub,
+        InOutCub,
+        InQuart,
+        OutQuart,
+        InOutQuart,
+        InQuint,
+        OutQuint,
+        InOutQuint,
         Count
     }
 
-    public EaseStyle easeStyle; 
-    public delegate float EaseFunction(float a, float b, float t);
-    private EaseFunction easeFunction;
-
-    [SerializeField] private Vector2 startValue;
-    [SerializeField] private Vector2 endValue;
-    [SerializeField] private float duration = 1f; //todo help me with duration
-    private float t;
-    
-    public Vector2 StartValue
-    {
-        set => startValue = value;
-    }
-
-    public Vector2 EndValue
-    {
-        set => endValue = value;
-    }
-
-    public float Duration
-    {
-        get => duration;
-        set => duration = value;
-    }
-
     //i want ease to be set with enum (for loops)
-    public EaseFunction SetEase(EaseStyle easeStyle)
+    public static Function GetFunction(Style style)
     {
-        switch (easeStyle)
+        switch (style)
         {
-            case EaseStyle.EaseLinear:
-                easeFunction = EaseLinear;
-                break;
-            case EaseStyle.EaseInSine:
-                easeFunction = EaseInSine;
-                break;
-            case EaseStyle.EaseOutSine:
-                easeFunction = EaseOutSine;
-                break;
-            case EaseStyle.EaseInOutSine:
-                easeFunction = EaseInOutSine;
-                break;
-            case EaseStyle.EaseInCircular:
-                easeFunction = EaseInCircular;
-                break;
-            case EaseStyle.EaseOutCircular:
-                easeFunction = EaseOutCircular;
-                break;
-            case EaseStyle.EaseInOutCircular:
-                easeFunction = EaseInOutCircular;
-                break;
-            case EaseStyle.EaseInExpo:
-                easeFunction = EaseInExpo;
-                break;
-            case EaseStyle.EaseOutExpo:
-                easeFunction = EaseOutExpo;
-                break;
-            case EaseStyle.EaseInOutExpo:
-                easeFunction = EaseInOutExpo;
-                break;
-            case EaseStyle.EaseInQuad:
-                easeFunction = EaseInQuad;
-                break;
-            case EaseStyle.EaseOutQuad:
-                easeFunction = EaseOutQuad;
-                break;
-            case EaseStyle.EaseInOutQuad:
-                easeFunction = EaseInOutQuad;
-                break;
-            case EaseStyle.EaseInCub:
-                easeFunction = EaseInCub;
-                break;
-            case EaseStyle.EaseOutCub:
-                easeFunction = EaseOutCub;
-                break;
-            case EaseStyle.EaseInOutCub:
-                easeFunction = EaseInOutCub;
-                break;
-            case EaseStyle.EaseInQuart:
-                easeFunction = EaseInQuart;
-                break;
-            case EaseStyle.EaseOutQuart:
-                easeFunction = EaseOutQuart;
-                break;
-            case EaseStyle.EaseInOutQuart:
-                easeFunction = EaseInOutQuart;
-                break;
-            case EaseStyle.EaseInQuint:
-                easeFunction = EaseInQuint;
-                break;
-            case EaseStyle.EaseOutQuint:
-                easeFunction = EaseOutQuint;
-                break;
-            case EaseStyle.EaseInOutQuint:
-                easeFunction = EaseInOutQuint;
-                break;
+            case Style.Linear:
+                return Linear;
+            case Style.InSine:
+                return InSine;
+            case Style.OutSine:
+                return OutSine;
+            case Style.InOutSine:
+                return InOutSine;
+            case Style.InCircular:
+                return InCircular;
+            case Style.OutCircular:
+                return OutCircular;
+            case Style.InOutCircular:
+                return InOutCircular;
+            case Style.InExpo:
+                return InExpo;
+            case Style.OutExpo:
+                return OutExpo;
+            case Style.InOutExpo:
+                return InOutExpo;
+            case Style.InQuad:
+                return InQuad;
+            case Style.OutQuad:
+                return OutQuad;
+            case Style.InOutQuad:
+                return InOutQuad;
+            case Style.InCub:
+                return InCub;
+            case Style.OutCub:
+                return OutCub;
+            case Style.InOutCub:
+                return InOutCub;
+            case Style.InQuart:
+                return InQuart;
+            case Style.OutQuart:
+                return OutQuart;
+            case Style.InOutQuart:
+                return InOutQuart;
+            case Style.InQuint:
+                return InQuint;
+            case Style.OutQuint:
+                return OutQuint;
+            case Style.InOutQuint:
+                return InOutQuint;
             default:
                 throw new ArgumentOutOfRangeException();
         }
-
-        return easeFunction;
-
     }
 
     //converters
-    private static float Ease(EaseFunction ease, float a, float b, float t, float d)
+    public static float Ease(Function ease, float a, float b, float t)
     {
         return ease(a, b, t);
     }
-    
-    private Vector2 Ease(EaseFunction ease, Vector2 a, Vector2 b, float t, float d)
+
+    public static Vector2 Ease(Function ease, Vector2 a, Vector2 b, float t)
     {
         return new Vector2(ease(a.x, b.x, t), ease(a.y, b.y, t));
     }
-    
-    private Vector3 Ease(EaseFunction ease,Vector3 a, Vector3 b, float t, float d)
+
+    public static Vector3 Ease(Function ease,Vector3 a, Vector3 b, float t)
     {
         return new Vector3(ease(a.x, b.x, t), ease(a.y, b.y, t), ease(a.z, b.z, t));
     }
 
     //the easings
-    public static float EaseLinear(float a, float b, float t)
+    public static float Linear(float a, float b, float t)
     {
         return a * (1 - t) + b * t;
     }
-    
-    float EaseInSine(float a, float b, float t)
+
+    public static float InSine(float a, float b, float t)
     {
         t = 1 - Mathf.Cos(t * Mathf.PI / 2);
-        return EaseLinear(a, b, t);
+        return Linear(a, b, t);
     }
-    
-    float EaseOutSine(float a, float b, float t)
+
+    public static float OutSine(float a, float b, float t)
     {
         t = Mathf.Sin(t * Mathf.PI / 2);
-        return EaseLinear(a, b, t);
+        return Linear(a, b, t);
     }
 
-    float EaseInOutSine(float a, float b, float t)
+    public static float InOutSine(float a, float b, float t)
     {
         t = (1 + Mathf.Sin(((t - 0.5f) * Mathf.PI))) / 2;
-        return EaseLinear(a, b, t);
+        return Linear(a, b, t);
     }
 
-    float EaseInCircular(float a, float b, float t)
+    public static float InCircular(float a, float b, float t)
     {
         t = 1 - Mathf.Sqrt(1 - Mathf.Pow(t, 2));
-        return EaseLinear(a, b, t);
+        return Linear(a, b, t);
     }
-    
-    float EaseOutCircular(float a, float b, float t)
+
+    public static float OutCircular(float a, float b, float t)
     {
         t = Mathf.Sqrt(1 - Mathf.Pow((t - 1), 2));
-        return EaseLinear(a, b, t);
+        return Linear(a, b, t);
     }
-    
-    float EaseInOutCircular(float a, float b, float t)
+
+    public static float InOutCircular(float a, float b, float t)
     {
         t = t < 0.5f ? 0.5f - Mathf.Sqrt(0.25f - t * t) : Mathf.Sqrt(0.25f - Mathf.Pow(t - 1, 2)) + 0.5f;
-        return EaseLinear(a, b, t);
+        return Linear(a, b, t);
     }
-    
-    float EaseInExpo(float a, float b, float t)
+
+    public static float InExpo(float a, float b, float t)
     {
         t = 1 - Mathf.Sqrt(1 - t);
-        return EaseLinear(a, b, t);
+        return Linear(a, b, t);
     }
-    
-    float EaseOutExpo(float a, float b, float t)
+
+    public static float OutExpo(float a, float b, float t)
     {
         t = Mathf.Sqrt(t);
-        return EaseLinear(a, b, t);
+        return Linear(a, b, t);
     }
-    
-    float EaseInOutExpo(float a, float b, float t)
+
+    public static float InOutExpo(float a, float b, float t)
     {
         t = t <= 0.5f ? 0.5f - Mathf.Sqrt(1 - 2 * t) / 2 : Mathf.Sqrt(2 * t - 1) / 2 + 0.5f;
-        return EaseLinear(a, b, t);
+        return Linear(a, b, t);
     }
-    
-    float EaseInQuad(float a, float b, float t)
+
+    public static float InQuad(float a, float b, float t)
     {
         t = Mathf.Pow(t, 2);
-        return EaseLinear(a, b, t);
+        return Linear(a, b, t);
     }
 
-    float EaseOutQuad(float a, float b, float t)
+    public static float OutQuad(float a, float b, float t)
     {
         t = 1 - Mathf.Pow(t - 1, 2);
-        return EaseLinear(a, b, t);
+        return Linear(a, b, t);
     }
 
-    float EaseInOutQuad(float a, float b, float t)
+    public static float InOutQuad(float a, float b, float t)
     {
         t = t <= 0.5f ? 2 * t * t : 1 - Mathf.Pow(2 * t - 2, 2) / 2;
-        return EaseLinear(a, b, t);
+        return Linear(a, b, t);
     }
 
-    float EaseInCub(float a, float b, float t)
+    public static float InCub(float a, float b, float t)
     {
         t = Mathf.Pow(t, 3);
-        return EaseLinear(a, b, t);
+        return Linear(a, b, t);
     }
 
-    float EaseOutCub(float a, float b, float t)
+    public static float OutCub(float a, float b, float t)
     {
         t = Mathf.Pow( t - 1, 3) + 1;
-        return EaseLinear(a, b, t);
+        return Linear(a, b, t);
     }
-    
-    float EaseInOutCub(float a, float b, float t)
+
+    public static float InOutCub(float a, float b, float t)
     {
         t = t <= 0.5 ? 4 * Mathf.Pow(t, 3) : 4 * Mathf.Pow(t - 1, 3) + 1;
-        return EaseLinear(a, b, t);
+        return Linear(a, b, t);
     }
 
-    float EaseInQuart(float a, float b, float t)
+    public static float InQuart(float a, float b, float t)
     {
         t = Mathf.Pow(t, 4);
-        return EaseLinear(a, b, t);
+        return Linear(a, b, t);
     }
 
-    float EaseOutQuart(float a, float b, float t)
+    public static float OutQuart(float a, float b, float t)
     {
         t = 1 - Mathf.Pow(t - 1, 4);
-        return EaseLinear(a, b, t);
+        return Linear(a, b, t);
     }
 
-    float EaseInOutQuart(float a, float b, float t)
+    public static float InOutQuart(float a, float b, float t)
     {
         t = t <= 0.5f ? - 8 * Mathf.Pow(t - 0.5f, 4) + 0.5f : 8 * Mathf.Pow(t - 0.5f, 4) + 0.5f;
-        return EaseLinear(a, b, t);
+        return Linear(a, b, t);
     }
 
-    float EaseInQuint(float a, float b, float t)
+    public static float InQuint(float a, float b, float t)
     {
         t = Mathf.Pow( t, 5);
-        return EaseLinear(a, b, t);
+        return Linear(a, b, t);
     }
 
-    float EaseOutQuint(float a, float b, float t)
+    public static float OutQuint(float a, float b, float t)
     {
         t = Mathf.Pow(t - 1, 5) + 1;
-        return EaseLinear(a, b, t);
+        return Linear(a, b, t);
     }
 
-    float EaseInOutQuint(float a, float b, float t)
+    public static float InOutQuint(float a, float b, float t)
     {
         t = t <= 0.5f ? 16 * Mathf.Pow(t, 5) : 16 * Mathf.Pow(t - 1, 5) + 1;
-        return EaseLinear(a, b, t);
+        return Linear(a, b, t);
     }
 }

@@ -2,44 +2,73 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using System;
+
 
 public class SpawnBalls : MonoBehaviour
 {
     [SerializeField] private GameObject ballPrefab;
-
-    private void ChangeEase(Vector2 pos, float t)
-    {
-        if (t > 0.5)
-        {
-            ease.SetEase(Easing.EaseStyle.EaseInQuad);
-        }
-    }
     
-    Easing ease = new Easing();
+    struct FunctionPack
+    {
+        public Easing.Function inFunc;
+        public Easing.Function outFunc;
+        public Easing.Function inOutFunc;
+	}
+    List<FunctionPack> packs = new List<FunctionPack>();
+
     void Start()
     {
         float offsetX = -12f;
         float offsetY = 2;
         int width = 12;
-        int paddingX = 2; //todo how to make this padding every 3rd. 
-        int paddingY = -4;
+        int paddingX = 5; //todo how to make this padding every 3rd. 
+        int paddingY = -6;
+
+        Dictionary<string, FunctionPack> dictionary = new Dictionary<string, FunctionPack>();
+        var names = Enum.GetNames(typeof(Easing.Function));
+        foreach(var name in names) 
+        {
+            if(name.Contains("InOut")) {
+
+			}
+            else if(name.Contains("In")) {
+
+			}
+            else if (name.Contains("Out")) {
+
+            }
+        }
         
-        ease.Duration = 2.0f;
-        ease.SetEase(Easing.EaseStyle.EaseLinear);
-        Rigidbody rb;
-        
-        for (int i = 2; i < (int) Easing.EaseStyle.Count + 2; i++)
+
+
+        for (int i = 0; i < (int) Easing.Style.Count; i++)
         {
             GameObject temp = Instantiate(ballPrefab, transform);
             float tempX = ((transform.position.x) + i % width) * paddingX + offsetX;
             float tempY = i / width * paddingY + offsetY;
-            
+
             temp.transform.position = new Vector3(tempX,  tempY, transform.position.z);
-            var function = temp.GetComponent<Easing>().SetEase(Easing.EaseStyle.EaseLinear);
-            temp.GetComponent<Easing>().StartValue = new Vector2(tempX, tempY);
-            temp.GetComponent<Easing>().EndValue =  new Vector2(tempX + 1,tempY + 1);
-            temp.GetComponent<Easing>().SetEase((Easing.EaseStyle) (i - 2));
+            var function = Easing.GetFunction((Easing.Style)i);
+            StartCoroutine(ease(temp.transform, function, new Vector2(tempX, tempY), new Vector2(tempX + 4, tempY + 4)));
         }
     }
+
+    IEnumerator ease(Transform that, Easing.Function func, Vector2 start, Vector2 end) 
+    {
+        float t = 0;
+
+        while(t <= 1.0f) {
+            Vector2 next = that.position;
+            next.x = Easing.GetFunction(Easing.Style.Linear)(start.x, end.x, t);
+            next.y = func(start.y, end.y, t);
+            that.position = next;
+            t += Time.deltaTime;
+            yield return null;
+		}
+        that.position = end;
+
+        StartCoroutine(ease(that, func, start, end));
+	}
 
 }
