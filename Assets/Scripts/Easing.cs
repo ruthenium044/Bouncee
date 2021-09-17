@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using JetBrains.Annotations;
 using UnityEngine;
 
 public class Easing : MonoBehaviour
@@ -28,31 +26,37 @@ public class Easing : MonoBehaviour
         EaseInOutQuart,
         EaseInQuint,
         EaseOutQuint,
-        EaseInOutQuint
+        EaseInOutQuint,
+        Count
     }
-    [SerializeField] private EaseStyle type;
+
+    public EaseStyle easeStyle; 
     public delegate float EaseFunction(float a, float b, float t);
     private EaseFunction easeFunction;
-    
-    [SerializeField] private float startValue;
-    [SerializeField] private float endValue;
 
-    public float StartValue
+    [SerializeField] private Vector2 startValue;
+    [SerializeField] private Vector2 endValue;
+    [SerializeField] private float duration = 1f; //todo help me with duration
+    private float t;
+    
+    public Vector2 StartValue
     {
         set => startValue = value;
     }
 
-    public float EndValue
+    public Vector2 EndValue
     {
         set => endValue = value;
     }
-    
-    void Start()
+
+    public float Duration
     {
-        //SetEase(type);
+        get => duration;
+        set => duration = value;
     }
-    
-    public void SetEase(EaseStyle easeStyle)
+
+    //i want ease to be set with enum (for loops)
+    public EaseFunction SetEase(EaseStyle easeStyle)
     {
         switch (easeStyle)
         {
@@ -125,49 +129,29 @@ public class Easing : MonoBehaviour
             default:
                 throw new ArgumentOutOfRangeException();
         }
-        type = easeStyle;
+
+        return easeFunction;
+
     }
 
-    //using this stuff??
-    
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Keypad0))
-        {
-            StartCoroutine(EaseSelected(easeFunction, startValue, endValue));
-        }
-    }
-
-    private IEnumerator EaseSelected(EaseFunction ease, float startPos, float endPos)
-    {
-        float t = 0;
-        while (t < 1.0f)
-        {
-            transform.position = new Vector3(transform.position.x, Ease(ease, startPos, endPos, t, 1), transform.position.z);
-            t += Time.unscaledDeltaTime;
-            yield return null;
-        }
-        transform.position = new Vector3(transform.position.x, endPos, transform.position.z);
-    }
-    
     //converters
     private static float Ease(EaseFunction ease, float a, float b, float t, float d)
     {
-        return ease(a, b, t / d);
+        return ease(a, b, t);
     }
     
     private Vector2 Ease(EaseFunction ease, Vector2 a, Vector2 b, float t, float d)
     {
-        return new Vector2(ease(a.x, b.x, t / d), ease(a.y, b.y, t / d));
+        return new Vector2(ease(a.x, b.x, t), ease(a.y, b.y, t));
     }
     
     private Vector3 Ease(EaseFunction ease,Vector3 a, Vector3 b, float t, float d)
     {
-        return new Vector3(ease(a.x, b.x, t / d), ease(a.y, b.y, t / d), ease(a.z, b.z, t / d));
+        return new Vector3(ease(a.x, b.x, t), ease(a.y, b.y, t), ease(a.z, b.z, t));
     }
 
     //the easings
-    float EaseLinear(float a, float b, float t)
+    public static float EaseLinear(float a, float b, float t)
     {
         return a * (1 - t) + b * t;
     }
@@ -228,7 +212,7 @@ public class Easing : MonoBehaviour
     
     float EaseInQuad(float a, float b, float t)
     {
-        t = t * t;
+        t = Mathf.Pow(t, 2);
         return EaseLinear(a, b, t);
     }
 
@@ -246,7 +230,7 @@ public class Easing : MonoBehaviour
 
     float EaseInCub(float a, float b, float t)
     {
-        t = t * t * t;
+        t = Mathf.Pow(t, 3);
         return EaseLinear(a, b, t);
     }
 
@@ -258,7 +242,7 @@ public class Easing : MonoBehaviour
     
     float EaseInOutCub(float a, float b, float t)
     {
-        t = t <= 0.5 ? 4 * t * t * t : 4 * Mathf.Pow(t - 1, 3) + 1;
+        t = t <= 0.5 ? 4 * Mathf.Pow(t, 3) : 4 * Mathf.Pow(t - 1, 3) + 1;
         return EaseLinear(a, b, t);
     }
 
@@ -294,7 +278,7 @@ public class Easing : MonoBehaviour
 
     float EaseInOutQuint(float a, float b, float t)
     {
-        t = t <= 0.5f ? 16 * Mathf.Pow(t, 5) : 16 * Mathf.Pow(t - 1, 5) + 1;;
+        t = t <= 0.5f ? 16 * Mathf.Pow(t, 5) : 16 * Mathf.Pow(t - 1, 5) + 1;
         return EaseLinear(a, b, t);
     }
 }

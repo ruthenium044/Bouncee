@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6914500554583745951}
   - component: {fileID: 6914500554583745936}
-  - component: {fileID: 6914500554583745937}
+  - component: {fileID: 1848725939749319446}
   m_Layer: 0
   m_Name: O1
   m_TagString: Untagged
@@ -44,10 +44,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16779419bff3e17488e43ba18ae36642, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  easeStyle: 0
-  start: -2
-  end: 2
---- !u!212 &6914500554583745937
+  startValue: 0
+  endValue: 0
+  duration: 1
+--- !u!212 &1848725939749319446
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
