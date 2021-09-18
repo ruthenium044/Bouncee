@@ -1,9 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
-using System;
-
 
 public class SpawnBalls : MonoBehaviour
 {
@@ -16,10 +12,7 @@ public class SpawnBalls : MonoBehaviour
         int width = 12;
         int paddingX = 5; //todo how to make this padding every 3rd. 
         int paddingY = -6;
-<<<<<<< HEAD
 
-=======
->>>>>>> 90bb23ca970cbc8e394b9f3256a9cc8657664ee5
         for (int i = 0; i < (int) Easing.Style.Count; i++)
         {
             GameObject temp = Instantiate(ballPrefab, transform);
