@@ -40,9 +40,7 @@ public static class Easing
         SpikeQuint,
         Count
     }
-
-    public static Style style;
-
+    
     //i want ease to be set with enum (for loops)
     public static Function GetFunction(Style style)
     {
@@ -209,7 +207,7 @@ public static class Easing
     
     public static float SpikeExpo(float a, float b, float t)
     {
-        //t = t <= 1f ? 1 - Mathf.Sqrt(1 - 2 * t) : 1 - Mathf.Sqrt(2 * t - 1);
+        t = t <= 0.5f ? 1 - Mathf.Sqrt(1 - 2 * t) : 1 - Mathf.Sqrt(2 * t - 1);
         return Linear(a, b, t);
     }
     

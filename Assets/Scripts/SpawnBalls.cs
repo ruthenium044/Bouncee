@@ -10,7 +10,7 @@ public class SpawnBalls : MonoBehaviour
         float offsetX = -12f;
         float offsetY = 2;
         int width = 12;
-        int paddingX = 5; //todo how to make this padding every 3rd. 
+        int paddingX = 5; //todo how to make this padding every 4th. 
         int paddingY = -6;
 
         for (int i = 0; i < (int) Easing.Style.Count; i++)
