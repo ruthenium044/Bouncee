@@ -153,6 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ballPrefab: {fileID: 6914500554583745938, guid: 33bd36c9f43e9fa40801a359d05d7548, type: 3}
+  slow: -0.5
 --- !u!4 &493036859
 Transform:
   m_ObjectHideFlags: 0
@@ -220,7 +221,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 20
+  orthographic size: 18
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2

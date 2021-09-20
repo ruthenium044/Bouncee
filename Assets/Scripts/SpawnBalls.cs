@@ -4,6 +4,8 @@ using UnityEngine;
 public class SpawnBalls : MonoBehaviour
 {
     [SerializeField] private GameObject ballPrefab;
+
+    [SerializeField] private float slow = 2f;
     
     void Start()
     {
@@ -29,9 +31,14 @@ public class SpawnBalls : MonoBehaviour
     {
         float t = 0;
 
-        while(t <= 1.0f) {
+        while(t <= 1.0f) { //this whole lower kinda confusing tbh
             Vector2 next = that.position;
             next.x = Easing.GetFunction(Easing.Style.Linear)(start.x, end.x, t);
+
+            //weighted average here. disable if want normal values
+            //todo for some reson this fucks with spacing fix it
+            //next.x = Easing.WeightedAverage(start.x, t, slow);
+
             next.y = func(start.y, end.y, t);
             that.position = next;
             t += Time.deltaTime;
@@ -41,5 +48,7 @@ public class SpawnBalls : MonoBehaviour
 
         StartCoroutine(ease(that, func, start, end));
 	}
+    
+
 
 }

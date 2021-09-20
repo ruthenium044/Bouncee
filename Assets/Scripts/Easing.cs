@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using System.Collections;
 
-public static class Easing 
+public static class Easing
 {
     public delegate float Function(float a, float b, float t);
 
@@ -38,9 +38,13 @@ public static class Easing
         OutQuint,
         InOutQuint,
         SpikeQuint,
+        EaseInBounce,
+        EaseOutBounce,
+        EaseInOutBounce,
+        SpikeBounce,
         Count
     }
-    
+
     //i want ease to be set with enum (for loops)
     public static Function GetFunction(Style style)
     {
@@ -106,6 +110,14 @@ public static class Easing
                 return InOutQuint;
             case Style.SpikeQuint:
                 return SpikeQuint;
+            case Style.EaseInBounce:
+                return EaseInBounce;
+            case Style.EaseOutBounce:
+                return EaseOutBounce;
+            case Style.EaseInOutBounce:
+                return EaseInOutBounce;
+            case Style.SpikeBounce:
+                return SpikeBounce;
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -122,9 +134,17 @@ public static class Easing
         return new Vector2(ease(a.x, b.x, t), ease(a.y, b.y, t));
     }
 
-    public static Vector3 Ease(Function ease,Vector3 a, Vector3 b, float t)
+    public static Vector3 Ease(Function ease, Vector3 a, Vector3 b, float t)
     {
         return new Vector3(ease(a.x, b.x, t), ease(a.y, b.y, t), ease(a.z, b.z, t));
+    }
+
+    //weighted average 
+    //todo test this later if the calculation is actually correct
+    public static float WeightedAverage(float a, float t, float slow)
+    {
+        t = (t * (slow - 1f) + a) / slow;
+        return t;
     }
 
     //the easings
@@ -132,7 +152,7 @@ public static class Easing
     {
         return a * (1 - t) + b * t;
     }
-    
+
     public static float SpikeLinear(float a, float b, float t)
     {
         t = t <= 0.5f ? 2 * t : 2 - 2 * t;
@@ -156,7 +176,7 @@ public static class Easing
         t = (1 + Mathf.Sin(((t - 0.5f) * Mathf.PI))) / 2;
         return Linear(a, b, t);
     }
-    
+
     public static float SpikeSine(float a, float b, float t)
     {
         t = t <= 0.5f ? -Mathf.Cos(t * Mathf.PI) + 1 : Mathf.Cos(t * Mathf.PI) + 1;
@@ -180,7 +200,7 @@ public static class Easing
         t = t < 0.5f ? 0.5f - Mathf.Sqrt(0.25f - t * t) : Mathf.Sqrt(0.25f - Mathf.Pow(t - 1, 2)) + 0.5f;
         return Linear(a, b, t);
     }
-    
+
     public static float SpikeCircular(float a, float b, float t)
     {
         t = t < 0.5f ? 1 - Mathf.Sqrt(1 - 4 * Mathf.Pow(t, 2)) : 1 - Mathf.Sqrt(1 - Mathf.Pow(2 * t - 2, 2));
@@ -204,13 +224,13 @@ public static class Easing
         t = t <= 0.5f ? 0.5f - Mathf.Sqrt(1 - 2 * t) / 2 : Mathf.Sqrt(2 * t - 1) / 2 + 0.5f;
         return Linear(a, b, t);
     }
-    
+
     public static float SpikeExpo(float a, float b, float t)
     {
         t = t <= 0.5f ? 1 - Mathf.Sqrt(1 - 2 * t) : 1 - Mathf.Sqrt(2 * t - 1);
         return Linear(a, b, t);
     }
-    
+
     public static float InQuad(float a, float b, float t)
     {
         t = Mathf.Pow(t, 2);
@@ -228,7 +248,7 @@ public static class Easing
         t = t <= 0.5f ? 2 * t * t : 1 - Mathf.Pow(2 * t - 2, 2) / 2;
         return Linear(a, b, t);
     }
-    
+
     public static float SpikeQuad(float a, float b, float t)
     {
         t = t <= 0.5f ? 4 * Mathf.Pow(t, 2) : Mathf.Pow(2 * t - 2, 2);
@@ -243,7 +263,7 @@ public static class Easing
 
     public static float OutCub(float a, float b, float t)
     {
-        t = Mathf.Pow( t - 1, 3) + 1;
+        t = Mathf.Pow(t - 1, 3) + 1;
         return Linear(a, b, t);
     }
 
@@ -252,10 +272,10 @@ public static class Easing
         t = t <= 0.5 ? 4 * Mathf.Pow(t, 3) : 4 * Mathf.Pow(t - 1, 3) + 1;
         return Linear(a, b, t);
     }
-    
+
     public static float SpikeCub(float a, float b, float t)
     {
-        t = t <= 0.5 ? 8 * Mathf.Pow(t, 3) : - Mathf.Pow(2 * t - 2, 3);
+        t = t <= 0.5 ? 8 * Mathf.Pow(t, 3) : -Mathf.Pow(2 * t - 2, 3);
         return Linear(a, b, t);
     }
 
@@ -273,19 +293,19 @@ public static class Easing
 
     public static float InOutQuart(float a, float b, float t)
     {
-        t = t <= 0.5f ? - 8 * Mathf.Pow(t - 0.5f, 4) + 0.5f : 8 * Mathf.Pow(t - 0.5f, 4) + 0.5f;
+        t = t <= 0.5f ? -8 * Mathf.Pow(t - 0.5f, 4) + 0.5f : 8 * Mathf.Pow(t - 0.5f, 4) + 0.5f;
         return Linear(a, b, t);
     }
-    
+
     public static float SpikeQuart(float a, float b, float t)
     {
-        t = t <= 0.5 ? 16 * Mathf.Pow(t, 4) : Mathf.Pow( 2 * t - 2, 4);
+        t = t <= 0.5 ? 16 * Mathf.Pow(t, 4) : Mathf.Pow(2 * t - 2, 4);
         return Linear(a, b, t);
     }
 
     public static float InQuint(float a, float b, float t)
     {
-        t = Mathf.Pow( t, 5);
+        t = Mathf.Pow(t, 5);
         return Linear(a, b, t);
     }
 
@@ -300,10 +320,58 @@ public static class Easing
         t = t <= 0.5f ? 16 * Mathf.Pow(t, 5) : 16 * Mathf.Pow(t - 1, 5) + 1;
         return Linear(a, b, t);
     }
-    
+
     public static float SpikeQuint(float a, float b, float t)
     {
-        t = t <= 0.5 ? 32 * Mathf.Pow(t, 5) : - Mathf.Pow( 2 * t - 2, 5);
+        t = t <= 0.5 ? 32 * Mathf.Pow(t, 5) : -Mathf.Pow(2 * t - 2, 5);
+        return Linear(a, b, t);
+    }
+
+    private static float BounceOut(float t)
+    {
+        float offset = 2.75f;
+        float scalar = 7.5625f;
+
+        if (t < 1 / offset)
+        {
+            t = scalar * Mathf.Pow(t, 2);
+        }
+        else if (t < 2 / offset)
+        {
+            t = scalar * Mathf.Pow(t - 1.5f / offset, 2) + 0.75f;
+        }
+        else if (t < 2.5f / offset)
+        {
+            t = scalar * Mathf.Pow(t - 2.25f / offset, 2) + 0.9375f;
+        }
+        else
+        {
+            t = scalar * Mathf.Pow(t - 2.625f / offset, 2) + 0.984375f;
+        }
+        return t;
+    }
+
+    public static float EaseInBounce(float a, float b, float t)
+    {
+        t = 1 - BounceOut(t);
+        return Linear(a, b, t);
+    }
+
+    public static float EaseOutBounce(float a, float b, float t)
+    {
+        t = BounceOut(t);
+        return Linear(a, b, t);
+    }
+
+    public static float EaseInOutBounce(float a, float b, float t)
+    {
+        t = t < 0.5f ? 1 - BounceOut(1 - 2 * t) / 2 - 0.5f : BounceOut(2 * t - 1) / 2 + 0.5f;
+        return Linear(a, b, t);
+    }
+    
+    public static float SpikeBounce(float a, float b, float t)
+    {
+        t = t < 0.5f ? 1 - BounceOut(1 - 2 * t) : 1 - BounceOut( 2 * t - 1);
         return Linear(a, b, t);
     }
 
