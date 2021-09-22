@@ -42,6 +42,14 @@ public static class Easing
         EaseOutBounce,
         EaseInOutBounce,
         SpikeBounce,
+        EaseInElastic,
+        EaseOutElastic,
+        EaseInOutElastic,
+        SpikeElastic,
+        EaseInBack,
+        EaseOutBack,
+        EaseInOutBack,
+        SpikeBack,
         Count
     }
 
@@ -118,6 +126,22 @@ public static class Easing
                 return EaseInOutBounce;
             case Style.SpikeBounce:
                 return SpikeBounce;
+            case Style.EaseInElastic:
+                return EaseInElastic;
+            case Style.EaseOutElastic:
+                return EaseOutElastic;
+            case Style.EaseInOutElastic:
+                return EaseInOutElastic;
+            case Style.SpikeElastic:
+                return SpikeElastic;
+            case Style.EaseInBack:
+                return EaseInBack;
+            case Style.EaseOutBack:
+                return EaseOutBack;
+            case Style.EaseInOutBack:
+                return EaseInOutBack;
+            case Style.SpikeBack:
+                return SpikeBack;
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -372,6 +396,73 @@ public static class Easing
     public static float SpikeBounce(float a, float b, float t)
     {
         t = t < 0.5f ? 1 - BounceOut(1 - 2 * t) : 1 - BounceOut( 2 * t - 1);
+        return Linear(a, b, t);
+    }
+
+    private static float ElasticIn(float t, float period,  float amplitude)
+    {
+        float tau = 2f * Mathf.PI;
+        if (t == 0f)
+        {
+            return 0;
+        }
+        if (t == 1f)
+        {
+            return 1;
+        }
+        t = - Mathf.Pow(t * amplitude, 2) * Mathf.Sin((t - 0.75f) * tau * period);
+        return t;
+    }
+    
+    public static float EaseInElastic(float a, float b, float t)
+    {
+        float period = 3f;
+        float amplitude = 1f;
+        t = ElasticIn(t, period, amplitude);
+        return Linear(a, b, t);
+    }
+    
+    public static float EaseOutElastic(float a, float b, float t)
+    {
+        float period = 3f;
+        float amplitude = 1f;
+        t = 1 - ElasticIn(1 - t, period, amplitude);
+        return Linear(a, b, t);
+    }
+    
+    public static float EaseInOutElastic(float a, float b, float t)
+    {
+        float period = 3f * 1.65f;
+        float amplitude = 1f * 2;
+        t = t <= 0.5f ? ElasticIn(t, period, amplitude) / 2 : - ElasticIn((1 - t), period, amplitude) / 2 + 1;
+        return Linear(a, b, t);
+    }
+    
+    public static float SpikeElastic(float a, float b, float t)
+    {
+        float period = 3f * 1.65f;
+        float amplitude = 1f * 2;
+        t = t <= 0.5f ? 0.5f + ElasticIn(t, period, amplitude) / 2 : 0.5f + ElasticIn((1 - t), period, amplitude) / 2;
+        return Linear(a, b, t);
+    }
+    
+    public static float EaseInBack(float a, float b, float t)
+    {
+        return Linear(a, b, t);
+    }
+    
+    public static float EaseOutBack(float a, float b, float t)
+    {
+        return Linear(a, b, t);
+    }
+    
+    public static float EaseInOutBack(float a, float b, float t)
+    {
+        return Linear(a, b, t);
+    }
+
+    public static float SpikeBack(float a, float b, float t)
+    {
         return Linear(a, b, t);
     }
 
