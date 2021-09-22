@@ -15,9 +15,9 @@ public abstract class EaseControllerBase : MonoBehaviour
         UnscaledWaitForSeconds
 	}
 
+    [SerializeField] private float duration;
     [SerializeField] private TimeMode timeMode;
-    [SerializeField] private float waitTime;
-
+    [SerializeField] private float deltaTime;
     private bool isPlaying = false;
     private bool isRunning = false;
 
@@ -59,7 +59,8 @@ public abstract class EaseControllerBase : MonoBehaviour
 
             Evaluate(t);
 
-            t += GetDeltaTime(timeMode);
+            float change = (GetDeltaTime(timeMode) / duration);
+            t += change;
             yield return GetWaitingTime(timeMode);
 		}
 
@@ -91,10 +92,10 @@ public abstract class EaseControllerBase : MonoBehaviour
 				yield return new WaitForSecondsRealtime(Time.fixedDeltaTime);
 				break;
 			case TimeMode.WaitForSeconds:
-				yield return new WaitForSeconds(waitTime);
+				yield return new WaitForSeconds(deltaTime);
                 break;
 			case TimeMode.UnscaledWaitForSeconds:
-                yield return new WaitForSecondsRealtime(waitTime);
+                yield return new WaitForSecondsRealtime(deltaTime);
                 break;
             default:
 				throw new UnityException("Unknown TimeMode");
@@ -113,9 +114,9 @@ public abstract class EaseControllerBase : MonoBehaviour
 			case TimeMode.UnscaledFixedUpdate:
 				return Time.fixedUnscaledDeltaTime;
 			case TimeMode.WaitForSeconds:
-                return waitTime;
+                return deltaTime;
 			case TimeMode.UnscaledWaitForSeconds:
-                return waitTime;
+                return deltaTime;
             default:
 				throw new UnityException("Unknown TimeMode");
 		}

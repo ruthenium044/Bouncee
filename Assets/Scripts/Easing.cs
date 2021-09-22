@@ -160,7 +160,8 @@ public static class Easing
 
     public static Vector3 Ease(Function ease, Vector3 a, Vector3 b, float t)
     {
-        return new Vector3(ease(t), ease(t), ease(t));
+        t = ease(t);
+        return new Vector3(Interpolate(a.x, b.x, t), Interpolate(a.y, b.y, t), Interpolate(a.z, b.z, t));
     }
 
     //weighted average 
@@ -172,7 +173,7 @@ public static class Easing
     }
 
     //the easings
-    public static float Interpolation(float a, float b, float t)
+    public static float Interpolate(float a, float b, float t)
     {
         return a * (1 - t) + b * t;
     }

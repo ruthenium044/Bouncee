@@ -15,14 +15,14 @@ public class TransformEaseEditor : UnityEditor.Editor
 
         UnityEditor.EditorGUILayout.Space(20f);
 
-        if (GUILayout.Button("Save Start Position")) {
+        if (GUILayout.Button("Save current Transform as Start")) {
             var target = serializedObject.targetObject as TransformEase;
             target.SetStartPosition(target.transform.position);
             target.SetStartRotation(target.transform.rotation.eulerAngles);
             target.SetStartScale(target.transform.localScale);
         }
 
-        if (GUILayout.Button("Save End Position")) {
+        if (GUILayout.Button("Save current Transform as End")) {
             var target = serializedObject.targetObject as TransformEase;
             target.SetEndPosition(target.transform.position);
             target.SetEndRotation(target.transform.rotation.eulerAngles);

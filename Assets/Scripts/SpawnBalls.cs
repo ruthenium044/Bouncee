@@ -33,13 +33,14 @@ public class SpawnBalls : MonoBehaviour
 
         while(t <= 1.0f) { //this whole lower kinda confusing tbh
             Vector2 next = that.position;
-            next.x = Easing.GetFunction(Easing.Style.Linear)(t);
+            var t1 = Easing.GetFunction(Easing.Style.Linear)(t);
+            next.x = Easing.Interpolate(start.x, end.x, t1);
 
             //weighted average here. disable if want normal values
             //todo for some reson this fucks with spacing fix it
             //next.x = Easing.WeightedAverage(start.x, t, slow);
-
-            next.y = func(t);
+            var t2 = func(t);
+            next.y = Easing.Interpolate(start.y, end.y, t2);
             that.position = next;
             t += Time.deltaTime;
             yield return null;
