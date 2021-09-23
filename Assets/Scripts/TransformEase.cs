@@ -12,6 +12,9 @@ public class TransformEase : EaseControllerBase
 		[SerializeField] public Vector3 scale;
 	}
 
+	[SerializeField] private State start;
+	[SerializeField] private State end;
+
 	public override void OnStart()
 	{
 		Apply(start);
@@ -28,9 +31,6 @@ public class TransformEase : EaseControllerBase
 	{
 		Apply(end);
 	}
-
-	[SerializeField] State start;
-	[SerializeField] State end;
 
 	public void SetStartPosition(Vector3 position)
 	{
@@ -57,7 +57,7 @@ public class TransformEase : EaseControllerBase
 		end.scale = scale;
 	}
 
-	private void Apply(State state)
+	public void Apply(State state)
 	{
 		transform.position = state.position;
 		transform.rotation = Quaternion.Euler(state.rotation);
