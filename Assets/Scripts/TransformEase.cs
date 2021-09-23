@@ -19,9 +19,9 @@ public class TransformEase : EaseControllerBase
 
 	public override void Evaluate(float t)
 	{
-		transform.position = Easing.Ease(Easing.Linear, start.position, end.position, t);
-		transform.rotation = Quaternion.Euler(Easing.Ease(Easing.InSine, start.rotation, end.rotation, t));
-		transform.localScale = Easing.Ease(Easing.Linear, start.scale, end.scale, t);
+		transform.position = EasingUtility.Ease(EasingUtility.Linear, start.position, end.position, t);
+		transform.rotation = Quaternion.Euler(EasingUtility.Ease(EasingUtility.InSine, start.rotation, end.rotation, t));
+		transform.localScale = EasingUtility.Ease(EasingUtility.Linear, start.scale, end.scale, t);
 	}
 
 	public override void OnEnd()

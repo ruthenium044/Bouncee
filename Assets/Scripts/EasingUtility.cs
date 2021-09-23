@@ -1,8 +1,7 @@
 using System;
 using UnityEngine;
-using System.Collections;
 
-public static class Easing
+public static class EasingUtility
 {
     public delegate float Function(float t);
 
@@ -148,14 +147,16 @@ public static class Easing
     }
 
     //converters
-    public static float Ease(Function ease, float t)
+    public static float Ease(Function ease, float a, float b, float t)
     {
-        return ease(t);
+        t = ease(t);
+        return Interpolate(a, b, t);
     }
 
     public static Vector2 Ease(Function ease, Vector2 a, Vector2 b, float t)
     {
-        return new Vector2(ease(t), ease(t));
+        t = ease(t);
+        return new Vector2(Interpolate(a.x, b.x, t), Interpolate(a.y, b.y, t));
     }
 
     public static Vector3 Ease(Function ease, Vector3 a, Vector3 b, float t)
@@ -172,6 +173,11 @@ public static class Easing
         return t;
     }
 
+    private static float Invert(float t)
+    {
+        return 1 - t;
+    }
+
     //the easings
     public static float Interpolate(float a, float b, float t)
     {
@@ -185,7 +191,7 @@ public static class Easing
     
     public static float SpikeLinear(float t)
     {
-        t = t <= 0.5f ? 2 * t : 2 * (1 - t);
+        t = t <= 0.5f ? Linear(2 * t) : Linear(2 * (1 - t));
         return t;
     }
 
@@ -263,97 +269,97 @@ public static class Easing
 
     public static float InQuad(float t)
     {
-        t = Mathf.Pow(t, 2);
+        t = t * t;
         return t;
     }
 
     public static float OutQuad(float t)
     {
-        t = 1 - Mathf.Pow(t - 1, 2);
+        t = Invert(InQuad(Invert(t)));
         return t;
     }
 
     public static float InOutQuad(float t)
     {
-        t = t <= 0.5f ? 2 * t * t : 1 - Mathf.Pow(2 * t - 2, 2) / 2;
+        t = t <= 0.5f ? 2 * InQuad(t) : 2 * OutQuad(t) - 1;
         return t;
     }
 
     public static float SpikeQuad(float t)
     {
-        t = t <= 0.5f ? 4 * Mathf.Pow(t, 2) : Mathf.Pow(2 * t - 2, 2);
+        t = t <= 0.5f ? 4 * InQuad(t) : 4 * InQuad(t - 1);
         return t;
     }
 
     public static float InCub(float t)
     {
-        t = Mathf.Pow(t, 3);
+        t = t * t * t;
         return t;
     }
 
     public static float OutCub(float t)
     {
-        t = Mathf.Pow(t - 1, 3) + 1;
+        t = Invert(InCub(Invert(t)));
         return t;
     }
 
     public static float InOutCub(float t)
     {
-        t = t <= 0.5 ? 4 * Mathf.Pow(t, 3) : 4 * Mathf.Pow(t - 1, 3) + 1;
+        t = t <= 0.5 ? 4 * InCub(t) : 4 * OutCub(t) - 3;
         return t;
     }
 
     public static float SpikeCub(float t)
     {
-        t = t <= 0.5 ? 8 * Mathf.Pow(t, 3) : -Mathf.Pow(2 * t - 2, 3);
+        //t = t <= 0.5 ? 8 * Mathf.Pow(t, 3) : -Mathf.Pow(2 * t - 2, 3);
         return t;
     }
 
     public static float InQuart(float t)
     {
-        t = Mathf.Pow(t, 4);
+        t = t * t * t * t;
         return t;
     }
 
     public static float OutQuart(float t)
     {
-        t = 1 - Mathf.Pow(t - 1, 4);
+        t = Invert(InQuart(Invert(t)));
         return t;
     }
 
     public static float InOutQuart(float t)
     {
-        t = t <= 0.5f ? -8 * Mathf.Pow(t - 0.5f, 4) + 0.5f : 8 * Mathf.Pow(t - 0.5f, 4) + 0.5f;
+        t = t <= 0.5f ? 8 * InQuart(t) : 8 * OutQuart(t) - 7;
         return t;
     }
 
     public static float SpikeQuart(float t)
     {
-        t = t <= 0.5 ? 16 * Mathf.Pow(t, 4) : Mathf.Pow(2 * t - 2, 4);
+        //t = t <= 0.5 ? 16 * Mathf.Pow(t, 4) : Mathf.Pow(2 * t - 2, 4);
         return t;
     }
 
     public static float InQuint(float t)
     {
-        t = Mathf.Pow(t, 5);
+        t = t * t * t * t * t;
         return t;
     }
 
     public static float OutQuint(float t)
     {
-        t = Mathf.Pow(t - 1, 5) + 1;
+        t = Invert(InQuint(Invert(t)));
         return t;
     }
 
     public static float InOutQuint(float t)
     {
-        t = t <= 0.5f ? 16 * Mathf.Pow(t, 5) : 16 * Mathf.Pow(t - 1, 5) + 1;
+        t = t <= 0.5f ? 16 * InQuint(t) : 16 * OutQuint(t) - 15;
         return t;
     }
 
     public static float SpikeQuint(float t)
     {
-        t = t <= 0.5 ? 32 * Mathf.Pow(t, 5) : -Mathf.Pow(2 * t - 2, 5);
+        //t = t <= 0.5 ? 32 * Mathf.Pow(t, 5) : -Mathf.Pow(2 * t - 2, 5);
         return t;
     }
 
@@ -395,13 +401,13 @@ public static class Easing
 
     public static float EaseInOutBounce(float t)
     {
-        t = t < 0.5f ? 1 - BounceOut(1 - 2 * t) / 2 - 0.5f : BounceOut(2 * t - 1) / 2 + 0.5f;
+        //t = t < 0.5f ? 1 - BounceOut(1 - 2 * t) / 2 - 0.5f : BounceOut(2 * t - 1) / 2 + 0.5f;
         return t;
     }
     
     public static float SpikeBounce(float t)
     {
-        t = t < 0.5f ? 1 - BounceOut(1 - 2 * t) : 1 - BounceOut( 2 * t - 1);
+       //t = t < 0.5f ? 1 - BounceOut(1 - 2 * t) : 1 - BounceOut( 2 * t - 1);
         return t;
     }
 
@@ -440,7 +446,7 @@ public static class Easing
     {
         float period = 3f * 1.65f;
         float amplitude = 1f * 2;
-        t = t <= 0.5f ? ElasticIn(t, period, amplitude) / 2 : - ElasticIn((1 - t), period, amplitude) / 2 + 1;
+        //t = t <= 0.5f ? ElasticIn(t, period, amplitude) / 2 : - ElasticIn((1 - t), period, amplitude) / 2 + 1;
         return t;
     }
     
@@ -448,7 +454,7 @@ public static class Easing
     {
         float period = 3f * 1.65f;
         float amplitude = 1f * 2;
-        t = t <= 0.5f ? 0.5f + ElasticIn(t, period, amplitude) / 2 : 0.5f + ElasticIn((1 - t), period, amplitude) / 2;
+        //t = t <= 0.5f ? ElasticIn(t, period, amplitude) / 2 : ElasticIn((1 - t), period, amplitude) / 2;
         return t;
     }
     
