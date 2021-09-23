@@ -276,7 +276,7 @@ MonoBehaviour:
     rotation: {x: -0, y: 0, z: 0}
     scale: {x: 10, y: 10, z: 10}
   end:
-    position: {x: 45.9, y: 2.8, z: 0}
+    position: {x: 44.67, y: 7.49, z: 0}
     rotation: {x: -0, y: 0, z: 0}
     scale: {x: 50, y: 50, z: 50}
 --- !u!1001 &1518193147
@@ -308,11 +308,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6914500554583745951, guid: 33bd36c9f43e9fa40801a359d05d7548, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 45.9
+      value: 31.97
       objectReference: {fileID: 0}
     - target: {fileID: 6914500554583745951, guid: 33bd36c9f43e9fa40801a359d05d7548, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.8
+      value: -2.79
       objectReference: {fileID: 0}
     - target: {fileID: 6914500554583745951, guid: 33bd36c9f43e9fa40801a359d05d7548, type: 3}
       propertyPath: m_LocalPosition.z
