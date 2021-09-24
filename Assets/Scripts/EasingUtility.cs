@@ -5,6 +5,8 @@ public static class EasingUtility
 {
     public delegate float Function(float t);
 
+    #region Styles
+    
     public enum Style
     {
         Linear,
@@ -13,14 +15,6 @@ public static class EasingUtility
         OutSine,
         InOutSine,
         SpikeSine,
-        InCircular,
-        OutCircular,
-        InOutCircular,
-        SpikeCircular,
-        InExpo,
-        OutExpo,
-        InOutExpo,
-        SpikeExpo,
         InQuad,
         OutQuad,
         InOutQuad,
@@ -37,6 +31,14 @@ public static class EasingUtility
         OutQuint,
         InOutQuint,
         SpikeQuint,
+        InExpo,
+        OutExpo,
+        InOutExpo,
+        SpikeExpo,
+        InCircular,
+        OutCircular,
+        InOutCircular,
+        SpikeCircular,
         EaseInBounce,
         EaseOutBounce,
         EaseInOutBounce,
@@ -69,22 +71,6 @@ public static class EasingUtility
                 return InOutSine;
             case Style.SpikeSine:
                 return SpikeSine;
-            case Style.InCircular:
-                return InCircular;
-            case Style.OutCircular:
-                return OutCircular;
-            case Style.InOutCircular:
-                return InOutCircular;
-            case Style.SpikeCircular:
-                return SpikeCircular;
-            case Style.InExpo:
-                return InExpo;
-            case Style.OutExpo:
-                return OutExpo;
-            case Style.InOutExpo:
-                return InOutExpo;
-            case Style.SpikeExpo:
-                return SpikeExpo;
             case Style.InQuad:
                 return InQuad;
             case Style.OutQuad:
@@ -117,6 +103,22 @@ public static class EasingUtility
                 return InOutQuint;
             case Style.SpikeQuint:
                 return SpikeQuint;
+            case Style.InExpo:
+                return InExpo;
+            case Style.OutExpo:
+                return OutExpo;
+            case Style.InOutExpo:
+                return InOutExpo;
+            case Style.SpikeExpo:
+                return SpikeExpo;
+            case Style.InCircular:
+                return InCircular;
+            case Style.OutCircular:
+                return OutCircular;
+            case Style.InOutCircular:
+                return InOutCircular;
+            case Style.SpikeCircular:
+                return SpikeCircular;
             case Style.EaseInBounce:
                 return EaseInBounce;
             case Style.EaseOutBounce:
@@ -145,8 +147,16 @@ public static class EasingUtility
                 throw new ArgumentOutOfRangeException();
         }
     }
-
+    
+    #endregion
+    
+    //todo David get these to your stuff from here ples
     //converters
+    public static float Interpolate(float a, float b, float t)
+    { //maybe add exterpolate later
+        return a * (1 - t) + b * t;
+    }
+    
     public static float Ease(Function ease, float a, float b, float t)
     {
         t = ease(t);
@@ -172,18 +182,20 @@ public static class EasingUtility
         t = (t * (slow - 1f) + a) / slow;
         return t;
     }
-
+    
+    //Helper functions
+    private static float tau = 2f * Mathf.PI;
+    
     private static float Invert(float t)
     {
         return 1 - t;
     }
 
+    #region Easing 
     //the easings
-    public static float Interpolate(float a, float b, float t)
-    {
-        return a * (1 - t) + b * t;
-    }
-
+  
+    
+    #region Linear
     public static float Linear(float t)
     {
         return t;
@@ -191,10 +203,12 @@ public static class EasingUtility
     
     public static float SpikeLinear(float t)
     {
-        t = t <= 0.5f ? Linear(2 * t) : Linear(2 * (1 - t));
+        t = t <= 0.5f ? 2 * Linear(t) : 2 * Linear((1 - t));
         return t;
     }
-
+    #endregion
+    
+    #region Sine
     public static float InSine(float t)
     {
         t = 1 - Mathf.Cos(t * Mathf.PI / 2);
@@ -203,70 +217,24 @@ public static class EasingUtility
 
     public static float OutSine(float t)
     {
-        t = Mathf.Sin(t * Mathf.PI / 2);
+        t = Invert(InSine(Invert(t)));
         return t;
     }
 
     public static float InOutSine(float t)
     {
-        t = (1 + Mathf.Sin(((t - 0.5f) * Mathf.PI))) / 2;
+        t = InSine(2 * t) / 2;
         return t;
     }
 
     public static float SpikeSine(float t)
     {
-        t = t <= 0.5f ? 1 - Mathf.Cos(t * Mathf.PI) : Mathf.Cos(t * Mathf.PI) + 1;
+        t = t <= 0.5f ? InSine(2 * t) : 2 - InSine(2 * t);
         return t;
     }
+    #endregion
 
-    public static float InCircular(float t)
-    {
-        t = 1 - Mathf.Sqrt(1 - t * t);
-        return t;
-    }
-
-    public static float OutCircular(float t)
-    {
-        t = Mathf.Sqrt(1 - (t - 1) * (t - 1));
-        return t;
-    }
-
-    public static float InOutCircular(float t)
-    {
-        t = t < 0.5f ? 0.5f - Mathf.Sqrt(0.25f - t * t) : Mathf.Sqrt(0.25f - (t - 1) * (t - 1)) + 0.5f;
-        return t;
-    }
-
-    public static float SpikeCircular(float t)
-    {
-        t = t < 0.5f ? 1 - Mathf.Sqrt(1 - 4 * Mathf.Pow(t, 2)) : 1 - Mathf.Sqrt(1 - Mathf.Pow(2 * t - 2, 2));
-        return t;
-    }
-
-    public static float InExpo(float t)
-    {
-        t = 1 - Mathf.Sqrt(1 - t);
-        return t;
-    }
-
-    public static float OutExpo(float t)
-    {
-        t = Mathf.Sqrt(t);
-        return t;
-    }
-
-    public static float InOutExpo(float t)
-    {
-        t = t <= 0.5f ? 0.5f - Mathf.Sqrt(1 - 2 * t) / 2 : Mathf.Sqrt(2 * t - 1) / 2 + 0.5f;
-        return t;
-    }
-
-    public static float SpikeExpo(float t)
-    {
-        t = t <= 0.5f ? 1 - Mathf.Sqrt(1 - 2 * t) : 1 - Mathf.Sqrt(2 * t - 1);
-        return t;
-    }
-
+    #region Quad
     public static float InQuad(float t)
     {
         t = t * t;
@@ -290,7 +258,9 @@ public static class EasingUtility
         t = t <= 0.5f ? 4 * InQuad(t) : 4 * InQuad(t - 1);
         return t;
     }
+    #endregion
 
+    #region Cubic
     public static float InCub(float t)
     {
         t = t * t * t;
@@ -311,10 +281,12 @@ public static class EasingUtility
 
     public static float SpikeCub(float t)
     {
-        //t = t <= 0.5 ? 8 * Mathf.Pow(t, 3) : -Mathf.Pow(2 * t - 2, 3);
+        t = t <= 0.5f ? 8 * InCub(t) : - 8 * InCub(t - 1);
         return t;
     }
+    #endregion
 
+    #region Quart
     public static float InQuart(float t)
     {
         t = t * t * t * t;
@@ -335,10 +307,12 @@ public static class EasingUtility
 
     public static float SpikeQuart(float t)
     {
-        //t = t <= 0.5 ? 16 * Mathf.Pow(t, 4) : Mathf.Pow(2 * t - 2, 4);
+        t = t <= 0.5f ? 16 * InQuart(t) : 16 * InQuart(t - 1);
         return t;
     }
-
+    #endregion
+    
+    #region Quint
     public static float InQuint(float t)
     {
         t = t * t * t * t * t;
@@ -359,11 +333,72 @@ public static class EasingUtility
 
     public static float SpikeQuint(float t)
     {
-        //t = t <= 0.5 ? 32 * Mathf.Pow(t, 5) : -Mathf.Pow(2 * t - 2, 5);
+        t = t <= 0.5f ? 32 * InQuint(t) : - 32 * InQuint(t - 1);
+        return t;
+    }
+    #endregion
+    
+    #region Expo
+    public static float InExpo(float t)
+    {
+        t = 1 - Mathf.Sqrt(1 - t);
         return t;
     }
 
-    private static float BounceOut(float t)
+    public static float OutExpo(float t)
+    {
+        t = Mathf.Sqrt(t);
+        return t;
+    }
+
+    public static float InOutExpo(float t)
+    {
+        t = t <= 0.5f ? 0.5f - Mathf.Sqrt(1 - 2 * t) / 2 : Mathf.Sqrt(2 * t - 1) / 2 + 0.5f;
+        return t;
+    }
+
+    public static float SpikeExpo(float t)
+    {
+        t = t <= 0.5f ? 1 - Mathf.Sqrt(1 - 2 * t) : 1 - Mathf.Sqrt(2 * t - 1);
+        return t;
+    }
+    #endregion
+    
+    #region Circular
+    
+    public static float InCircular(float t)
+    {
+        t = 1 - Mathf.Sqrt(1 - t * t);
+        return t;
+    }
+
+    public static float OutCircular(float t)
+    {
+        t = Mathf.Sqrt(1 - (t - 1) * (t - 1));
+        return t;
+    }
+    
+    public static float InOutCircular(float t)
+    {
+        t = t < 0.5f ? 0.5f - Mathf.Sqrt(0.25f - t * t) : Mathf.Sqrt(0.25f - (t - 1) * (t - 1)) + 0.5f;
+        return t;
+    }
+
+    public static float SpikeCircular(float t)
+    {
+        t = t < 0.5f ? 1 - Mathf.Sqrt(1 - 4 * Mathf.Pow(t, 2)) : 1 - Mathf.Sqrt(1 - Mathf.Pow(2 * t - 2, 2));
+        return t;
+    }
+    #endregion
+
+    #region Bounce
+    public static float EaseInBounce(float t)
+    {
+        t = Invert(EaseOutBounce(Invert(t)));
+        return t;
+    }
+
+    public static float EaseOutBounce(float t)
     {
         float offset = 2.75f;
         float scalar = 7.5625f;
@@ -387,38 +422,32 @@ public static class EasingUtility
         return t;
     }
 
-    public static float EaseInBounce(float t)
-    {
-        t = 1 - BounceOut(t);
-        return t;
-    }
-
-    public static float EaseOutBounce(float t)
-    {
-        t = BounceOut(t);
-        return t;
-    }
-
     public static float EaseInOutBounce(float t)
     {
-        //t = t < 0.5f ? 1 - BounceOut(1 - 2 * t) / 2 - 0.5f : BounceOut(2 * t - 1) / 2 + 0.5f;
+        t = t < 0.5f ? Invert(EaseOutBounce(1 - 2 * t)) / 2 : EaseOutBounce(2 * t - 1) / 2 + 0.5f;
         return t;
     }
     
     public static float SpikeBounce(float t)
     {
-       //t = t < 0.5f ? 1 - BounceOut(1 - 2 * t) : 1 - BounceOut( 2 * t - 1);
+       t = t < 0.5f ? Invert(EaseOutBounce(1 - 2 * t)) : Invert(EaseOutBounce( 2 * t - 1));
         return t;
     }
+    #endregion
 
-    private static float ElasticIn(float t, float period,  float amplitude)
+    #region Elast
+
+    //todo maybe some day make these as params
+    private static float period = 3f;
+    private static float amplitude = 1f;
+    
+    public static float EaseInElastic(float t)
     {
-        float tau = 2f * Mathf.PI;
-        if (t == 0f)
+        if (t <= 0f)
         {
             return 0;
         }
-        if (t == 1f)
+        if (t >= 1f)
         {
             return 1;
         }
@@ -426,38 +455,31 @@ public static class EasingUtility
         return t;
     }
     
-    public static float EaseInElastic(float t)
-    {
-        float period = 3f;
-        float amplitude = 1f;
-        t = ElasticIn(t, period, amplitude);
-        return t;
-    }
-    
     public static float EaseOutElastic(float t)
     {
-        float period = 3f;
-        float amplitude = 1f;
-        t = 1 - ElasticIn(1 - t, period, amplitude);
+        t = Invert(EaseInElastic(Invert(t)));
         return t;
     }
     
+    //todo fix those ples
     public static float EaseInOutElastic(float t)
     {
-        float period = 3f * 1.65f;
-        float amplitude = 1f * 2;
-        //t = t <= 0.5f ? ElasticIn(t, period, amplitude) / 2 : - ElasticIn((1 - t), period, amplitude) / 2 + 1;
+        //amplitude = 1f * 1.65f;
+        //period = 3f * 2f;
+        t = t <= 0.5f ? EaseInElastic(t) / 2  : EaseOutElastic(t) / 2;
         return t;
     }
-    
+
     public static float SpikeElastic(float t)
     {
-        float period = 3f * 1.65f;
-        float amplitude = 1f * 2;
-        //t = t <= 0.5f ? ElasticIn(t, period, amplitude) / 2 : ElasticIn((1 - t), period, amplitude) / 2;
+        //amplitude = 1f * 1.65f;
+        //period = 3f * 2f;
+        t = t <= 0.5f ? EaseInElastic(t) / 2 : EaseInElastic(Invert(t)) / 2;
         return t;
     }
+    #endregion
     
+    #region Back
     public static float EaseInBack(float t)
     {
         return t;
@@ -477,5 +499,7 @@ public static class EasingUtility
     {
         return t;
     }
+    #endregion
 
+    #endregion \\Easing
 }
