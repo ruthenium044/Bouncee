@@ -136,13 +136,13 @@ public static class EasingUtility
             case Style.SpikeElastic:
                 return SpikeElastic;
             case Style.EaseInBack:
-                return EaseInBack;
+                return EaseInBackSmall;
             case Style.EaseOutBack:
-                return EaseOutBack;
+                return EaseOutBackSmall;
             case Style.EaseInOutBack:
-                return EaseInOutBack;
+                return EaseInOutBackSmall;
             case Style.SpikeBack:
-                return SpikeBack;
+                return SpikeBackSmall;
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -436,12 +436,7 @@ public static class EasingUtility
     #endregion
 
     #region Elast
-
-    //todo maybe some day make these as params
-    private static float period = 3f;
-    private static float amplitude = 1f;
-    
-    public static float EaseInElastic(float t)
+    public static float EaseInElastic(float t, float amplitude, float period)
     {
         if (t <= 0f)
         {
@@ -455,6 +450,12 @@ public static class EasingUtility
         return t;
     }
     
+    public static float EaseInElastic(float t)
+    {
+        t = EaseInElastic(t, 1f, 3f);
+        return t;
+    }
+    
     public static float EaseOutElastic(float t)
     {
         t = Invert(EaseInElastic(Invert(t)));
@@ -464,38 +465,61 @@ public static class EasingUtility
     //todo fix those ples
     public static float EaseInOutElastic(float t)
     {
-        //amplitude = 1f * 1.65f;
-        //period = 3f * 2f;
-        t = t <= 0.5f ? EaseInElastic(t) / 2  : EaseOutElastic(t) / 2;
+        float amplitude = 1f * 1.65f;
+        float period = 3f * 2f;
+        t = t <= 0.5f ? EaseInElastic(t, amplitude, period) / 2 : Invert(EaseInElastic(Invert(t), amplitude, period)) / 2;
         return t;
     }
 
     public static float SpikeElastic(float t)
     {
-        //amplitude = 1f * 1.65f;
-        //period = 3f * 2f;
-        t = t <= 0.5f ? EaseInElastic(t) / 2 : EaseInElastic(Invert(t)) / 2;
+        float amplitude = 1f * 1.65f;
+        float period = 3f * 2f;
+        t = t <= 0.5f ? 0.5f - EaseInElastic(t, amplitude, period) : 0.5f - EaseInElastic(Invert(t), amplitude, period);
         return t;
     }
     #endregion
     
-    #region Back
-    public static float EaseInBack(float t)
+    #region Back Small
+    public static float EaseInBackSmall(float t)
     {
         return t;
     }
     
-    public static float EaseOutBack(float t)
+    public static float EaseOutBackSmall(float t)
     {
         return t;
     }
     
-    public static float EaseInOutBack(float t)
+    public static float EaseInOutBackSmall(float t)
     {
         return t;
     }
 
-    public static float SpikeBack(float t)
+    public static float SpikeBackSmall(float t)
+    {
+        return t;
+    }
+    #endregion
+    
+    
+    #region Back Big
+    public static float EaseInBackBig(float t)
+    {
+        return t;
+    }
+    
+    public static float EaseOutBackBig(float t)
+    {
+        return t;
+    }
+    
+    public static float EaseInOutBackBig(float t)
+    {
+        return t;
+    }
+
+    public static float SpikeBackBig(float t)
     {
         return t;
     }
