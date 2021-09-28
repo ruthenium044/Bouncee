@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class SpiralUtility : MonoBehaviour
 {
-    [SerializeField] private float length = 1;
     [SerializeField] private float radius = 1;
     [SerializeField] private float radiusCircular = 1;
     [SerializeField] private int period = 1;
     [SerializeField] private int detailLevel = 36;
-    [SerializeField] private bool circular = false;
+    [SerializeField] private bool circular;
     [SerializeField] private float lineThickness = 6f;
     [Header("Bezie")] 
     [SerializeField] private Transform starPoint;
@@ -22,7 +21,6 @@ public class SpiralUtility : MonoBehaviour
         float detailCount = detailLevel * period;
 
         List<Vector3> points = new List<Vector3>();
-        
         for (int i = 0; i < detailCount; i++)
         {
             float t = i / detailCount; //normalize t
@@ -41,7 +39,7 @@ public class SpiralUtility : MonoBehaviour
         for (int i = 0; i < detailCount; i++)
         {
             float t = i / detailCount; //normalize t
-            circlePoints.Add(Cicrle(t));
+            circlePoints.Add(Circle(t));
         }
 
         Handles.DrawAAPolyLine(circlePoints.ToArray());
@@ -50,7 +48,7 @@ public class SpiralUtility : MonoBehaviour
             startTangent.position, endTangent.position, Color.green, null, 2f);
     }
 
-    private Vector3 Cicrle(float t)
+    private Vector3 Circle(float t)
     {
         float x = Mathf.Cos(t * Mathf.PI * 2) * radiusCircular;
         float z = Mathf.Sin(t * Mathf.PI * 2) * radiusCircular;
@@ -59,20 +57,24 @@ public class SpiralUtility : MonoBehaviour
     
     private Vector3 Spiral(float t)
     {
-        float x = EaseCos(t * Mathf.PI * 2 * period);
-        float y = EaseSin(t * Mathf.PI * 2 * period);
-        float z = Mathf.LerpUnclamped(0, length, t);
-        return new Vector3(x, y, z);
+        Vector3 dir = (endPoint.position - starPoint.position).normalized;
+        float x = EaseCos(t * Mathf.PI * 2 * period) + Mathf.LerpUnclamped(starPoint.position.x, endPoint.position.x, t);
+        float y = EaseSin(t * Mathf.PI * 2 * period) + Mathf.LerpUnclamped(starPoint.position.y, endPoint.position.y, t);
+        float z = Mathf.LerpUnclamped(starPoint.position.z, endPoint.position.z, t);
+
+        Vector3 curve = new Vector3(x, y, z);   
+        Gizmos.DrawLine(endPoint.transform.up, Vector3.zero);
+        dir = Quaternion.AngleAxis(90, dir) * dir;
+        Gizmos.DrawLine(dir, Vector3.zero);
+        
+        return curve ;
     }
     
     private Vector3 SpiralCircular(float t)
     {
-        t *= 2 * Mathf.PI;
-        
         float x = EaseCos(t * Mathf.PI * 2 * period);
         float y = EaseSin(t * Mathf.PI * 2 * period);
-        float z = Mathf.LerpUnclamped(0, length, t);
-
+        float z = Mathf.LerpUnclamped(0, 1, t);
         return new Vector3(x, y, z);
     }
     
