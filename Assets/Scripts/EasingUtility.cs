@@ -436,6 +436,7 @@ public static class EasingUtility
     #endregion
 
     #region Elast
+    //todo get rid of all pows
     public static float EaseInElastic(float t, float amplitude, float period)
     {
         if (t <= 0f)
@@ -482,21 +483,28 @@ public static class EasingUtility
     #region Back Small
     public static float EaseInBackSmall(float t)
     {
+        float a = 1.70158f;
+        t = (a + 1) * InCub(t) - a * t * t;
         return t;
     }
     
     public static float EaseOutBackSmall(float t)
     {
+        t = Invert(EaseInBackSmall(Invert(t)));
         return t;
     }
     
     public static float EaseInOutBackSmall(float t)
     {
+        float p = 1.75f;
+        t = t <= 0.5f ? EaseInBackSmall(p * t) : Invert(EaseInBackSmall(p * Invert(t)));
         return t;
     }
 
     public static float SpikeBackSmall(float t)
     {
+        float p = 2f;
+        t = t <= 0.5f ? EaseInBackSmall(p * t) : EaseInBackSmall(p * Invert(t));
         return t;
     }
     #endregion
