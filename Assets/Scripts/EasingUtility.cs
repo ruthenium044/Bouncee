@@ -136,13 +136,13 @@ public static class EasingUtility
             case Style.SpikeElastic:
                 return SpikeElastic;
             case Style.EaseInBack:
-                return EaseInBackSmall;
+                return EaseInBack;
             case Style.EaseOutBack:
-                return EaseOutBackSmall;
+                return EaseOutBack;
             case Style.EaseInOutBack:
-                return EaseInOutBackSmall;
+                return EaseInOutBack;
             case Style.SpikeBack:
-                return SpikeBackSmall;
+                return SpikeBack;
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -481,53 +481,30 @@ public static class EasingUtility
     #endregion
     
     #region Back Small
-    public static float EaseInBackSmall(float t)
+    public static float EaseInBack(float t)
     {
         float a = 1.70158f;
         t = (a + 1) * InCub(t) - a * t * t;
         return t;
     }
     
-    public static float EaseOutBackSmall(float t)
+    public static float EaseOutBack(float t)
     {
-        t = Invert(EaseInBackSmall(Invert(t)));
+        t = Invert(EaseInBack(Invert(t)));
         return t;
     }
     
-    public static float EaseInOutBackSmall(float t)
+    public static float EaseInOutBack(float t)
     {
         float p = 1.75f;
-        t = t <= 0.5f ? EaseInBackSmall(p * t) : Invert(EaseInBackSmall(p * Invert(t)));
+        t = t <= 0.5f ? EaseInBack(p * t) : Invert(EaseInBack(p * Invert(t)));
         return t;
     }
 
-    public static float SpikeBackSmall(float t)
+    public static float SpikeBack(float t)
     {
         float p = 2f;
-        t = t <= 0.5f ? EaseInBackSmall(p * t) : EaseInBackSmall(p * Invert(t));
-        return t;
-    }
-    #endregion
-    
-    
-    #region Back Big
-    public static float EaseInBackBig(float t)
-    {
-        return t;
-    }
-    
-    public static float EaseOutBackBig(float t)
-    {
-        return t;
-    }
-    
-    public static float EaseInOutBackBig(float t)
-    {
-        return t;
-    }
-
-    public static float SpikeBackBig(float t)
-    {
+        t = t <= 0.5f ? EaseInBack(p * t) : EaseInBack(p * Invert(t));
         return t;
     }
     #endregion
