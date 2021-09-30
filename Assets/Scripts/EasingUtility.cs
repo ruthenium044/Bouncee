@@ -465,15 +465,15 @@ public static class EasingUtility
     public static float EaseInOutElastic(float t)
     {
         float amplitude = 1f * 2f;
-        float period = 3f * 1.65f;
-        t = t <= 0.5f ? EaseInElastic(t, amplitude, period) / 2 : Invert(EaseInElastic(Invert(t), amplitude, period)) / 2;
+        float period = 3f * 1.645f;
+        t = t <= 0.5f ? EaseInElastic(t, amplitude, period) / 2 : Invert(EaseInElastic(Invert(t), amplitude, period)) / 2 + 0.5f;
         return t;
     }
 
     public static float SpikeElastic(float t)
     {
         float amplitude = 1f * 2f;
-        float period = 3f * 1.65f;
+        float period = 3f * 1.645f;
         t = t <= 0.5f ? EaseInElastic(t, amplitude, period) :  EaseInElastic(Invert(t), amplitude, period);
         return t;
     }
