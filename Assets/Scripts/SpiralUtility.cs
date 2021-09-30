@@ -12,9 +12,9 @@ public class SpiralUtility : MonoBehaviour
     [SerializeField] private float lineThickness = 6f;
     [Header("Bezie")] 
     [SerializeField] private Transform starPoint;
-    [SerializeField] private Transform endPoint;
     [SerializeField] private Transform startTangent;
     [SerializeField] private Transform endTangent;
+    [SerializeField] private Transform endPoint;
     
     private void OnDrawGizmos()
     {
@@ -58,16 +58,19 @@ public class SpiralUtility : MonoBehaviour
     private Vector3 Spiral(float t)
     {
         Vector3 dir = (endPoint.position - starPoint.position).normalized;
-        float x = EaseCos(t * Mathf.PI * 2 * period) + Mathf.LerpUnclamped(starPoint.position.x, endPoint.position.x, t);
-        float y = EaseSin(t * Mathf.PI * 2 * period) + Mathf.LerpUnclamped(starPoint.position.y, endPoint.position.y, t);
+        float x = EaseCos(t * Mathf.PI * 2 * period);// + Mathf.LerpUnclamped(starPoint.position.x, endPoint.position.x, t);
+        float y = EaseSin(t * Mathf.PI * 2 * period);// + Mathf.LerpUnclamped(starPoint.position.y, endPoint.position.y, t);
         float z = Mathf.LerpUnclamped(starPoint.position.z, endPoint.position.z, t);
 
-        Vector3 curve = new Vector3(x, y, z);   
-        Gizmos.DrawLine(endPoint.transform.up, Vector3.zero);
-        dir = Quaternion.AngleAxis(90, dir) * dir;
-        Gizmos.DrawLine(dir, Vector3.zero);
+        Vector3 spiral = new Vector3(x, y, z);
         
-        return curve ;
+        Vector3 circle = Circle(t);
+        
+        //todo david explain me this
+        Vector3 localAxisX = circle.normalized;
+        Vector3 localAxisY = Vector3.up;
+
+        return circle + spiral.x * localAxisX + spiral.y * localAxisY ;
     }
     
     private Vector3 SpiralCircular(float t)
