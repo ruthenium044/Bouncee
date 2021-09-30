@@ -153,7 +153,7 @@ public static class EasingUtility
     //todo David get these to your stuff from here ples
     //converters
     public static float Interpolate(float a, float b, float t)
-    { //maybe add exterpolate later
+    { //todo maybe add exterpolate later
         return a * (1 - t) + b * t;
     }
     
@@ -193,7 +193,6 @@ public static class EasingUtility
 
     #region Easing 
     //the easings
-  
     
     #region Linear
     public static float Linear(float t)
@@ -405,19 +404,19 @@ public static class EasingUtility
 
         if (t < 1 / offset)
         {
-            t = scalar * Mathf.Pow(t, 2);
+            t = scalar * t * t;
         }
         else if (t < 2 / offset)
         {
-            t = scalar * Mathf.Pow(t - 1.5f / offset, 2) + 0.75f;
+            t = scalar * InQuad(t - 1.5f / offset) + 0.75f;
         }
         else if (t < 2.5f / offset)
         {
-            t = scalar * Mathf.Pow(t - 2.25f / offset, 2) + 0.9375f;
+            t = scalar * InQuad(t - 2.25f / offset) + 0.9375f;
         }
         else
         {
-            t = scalar * Mathf.Pow(t - 2.625f / offset, 2) + 0.984375f;
+            t = scalar * InQuad(t - 2.625f / offset) + 0.984375f;
         }
         return t;
     }
@@ -436,7 +435,6 @@ public static class EasingUtility
     #endregion
 
     #region Elast
-    //todo get rid of all pows
     public static float EaseInElastic(float t, float amplitude, float period)
     {
         if (t <= 0f)
@@ -447,7 +445,7 @@ public static class EasingUtility
         {
             return 1;
         }
-        t = - Mathf.Pow(t * amplitude, 2) * Mathf.Sin((t - 0.75f) * tau * period);
+        t = - InQuad(t * amplitude) * Mathf.Sin((t - 0.75f) * tau * period);
         return t;
     }
     
