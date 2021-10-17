@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TransformEase : EaseControllerBase
+public class TransformEase : MonoBehaviour
 {
 	[System.Serializable]
 	public struct State
@@ -15,19 +15,26 @@ public class TransformEase : EaseControllerBase
 	[SerializeField] private State start;
 	[SerializeField] private State end;
 
-	public override void OnStart()
+	[SerializeField] private UnityEasingTimer timer = new UnityEasingTimer();
+
+	private void Awake()
+	{
+		timer.Start(this);
+	}
+
+	public void OnStart()
 	{
 		Apply(start);
 	}
 
-	public override void Evaluate(float t)
+	public void Evaluate(EaseData t)
 	{
-		transform.position = EasingUtility.Ease(EasingUtility.Linear, start.position, end.position, t);
-		transform.rotation = Quaternion.Euler(EasingUtility.Ease(EasingUtility.InSine, start.rotation, end.rotation, t));
-		transform.localScale = EasingUtility.Ease(EasingUtility.Linear, start.scale, end.scale, t);
+		transform.position = EasingUtility.Ease(EasingUtility.Linear, start.position, end.position, (float)t.Eased);
+		transform.rotation = Quaternion.Euler(EasingUtility.Ease(EasingUtility.InSine, start.rotation, end.rotation, (float)t.Eased));
+		transform.localScale = EasingUtility.Ease(EasingUtility.Linear, start.scale, end.scale, (float)t.Eased);
 	}
 
-	public override void OnEnd()
+	public void OnEnd()
 	{
 		Apply(end);
 	}
@@ -67,7 +74,16 @@ public class TransformEase : EaseControllerBase
 	private void Update()
 	{
 		if(Input.GetKeyDown(KeyCode.Space)) {
-			Play();
+			timer.SetDuration(2.0).SetSpeed(0.5).Play();
+		}
+		if(Input.GetKeyUp(KeyCode.P)) {
+			timer.Pause();
+		}
+		if (Input.GetKeyUp(KeyCode.S)) {
+			timer.Stop();
+		}
+		if (Input.GetKeyUp(KeyCode.R)) {
+			timer.Reset();
 		}
 	}
 
