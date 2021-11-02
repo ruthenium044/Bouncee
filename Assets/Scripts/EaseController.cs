@@ -63,7 +63,7 @@ public class UnityEasingTimer
 	[SerializeField] private UnityEvent onEndUnityEvent;
 	[SerializeField] private List<TimedEvent> timePointUnityEvents = new List<TimedEvent>();
 
-	private EasingUtility.Function function = EasingUtility.GetFunction(EasingUtility.Style.Linear);
+	private EasingUtility.Function function = EasingUtility.GetFunction(EasingUtility.Style.Linear, EasingUtility.Mode.In);
 	private event System.Action OnStart;
 	private event System.Action OnEnd;
 	private event System.Action<EaseData> OnRun;
@@ -175,7 +175,7 @@ public class UnityEasingTimer
 	private void RefreshEasingFunction()
 	{
 		if(hasEasingStyleChanged) {
-			function = EasingUtility.GetFunction(easingStyle);
+			function = EasingUtility.GetFunction(easingStyle, EasingUtility.Mode.In);
 			hasEasingStyleChanged = false;
 		}
 	}

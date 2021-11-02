@@ -15,15 +15,21 @@ public class SpawnBalls : MonoBehaviour
         int paddingX = 5; //todo how to make this padding every 4th. 
         int paddingY = -6;
 
+
         for (int i = 0; i < (int) EasingUtility.Style.Count; i++)
         {
-            GameObject temp = Instantiate(ballPrefab, transform);
-            float tempX = ((transform.position.x) + i % width) * paddingX + offsetX;
-            float tempY = i / width * paddingY + offsetY;
+            for (int j = 0; j < (int) EasingUtility.Mode.Count; j++)
+            {
+                GameObject temp = Instantiate(ballPrefab, transform);
+                float tempX = ((transform.position.x) + i % width) * paddingX + offsetX;
+                float tempY = i / width * paddingY + offsetY;
+                tempY += j * paddingY;
 
-            temp.transform.position = new Vector3(tempX,  tempY, transform.position.z);
-            var function = EasingUtility.GetFunction((EasingUtility.Style)i);
-            StartCoroutine(ease(temp.transform, function, new Vector2(tempX, tempY), new Vector2(tempX + 4, tempY + 4)));
+                temp.transform.position = new Vector3(tempX, tempY, transform.position.z);
+                var function = EasingUtility.GetFunction((EasingUtility.Style) i, (EasingUtility.Mode) j);
+                StartCoroutine(ease(temp.transform, function, new Vector2(tempX, tempY),
+                    new Vector2(tempX + 4, tempY + 4)));
+            }
         }
     }
 
@@ -33,7 +39,7 @@ public class SpawnBalls : MonoBehaviour
 
         while(t <= 1.0f) { //this whole lower kinda confusing tbh
             Vector2 next = that.position;
-            var t1 = EasingUtility.GetFunction(EasingUtility.Style.Linear)(t);
+            var t1 = EasingUtility.GetFunction(EasingUtility.Style.Linear, EasingUtility.Mode.In)(t);
             next.x = EasingUtility.Interpolate(start.x, end.x, t1);
 
             //weighted average here. disable if want normal values

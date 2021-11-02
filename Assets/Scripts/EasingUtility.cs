@@ -7,145 +7,182 @@ public static class EasingUtility
 
     #region Styles
     
+    public enum Mode
+    {
+        In,
+        Out,
+        InOut,
+        Spike,
+        Count
+    }
+    
     public enum Style
     {
         Linear,
-        SpikeLinear,
-        InSine,
-        OutSine,
-        InOutSine,
-        SpikeSine,
-        InQuad,
-        OutQuad,
-        InOutQuad,
-        SpikeQuad,
-        InCub,
-        OutCub,
-        InOutCub,
-        SpikeCub,
-        InQuart,
-        OutQuart,
-        InOutQuart,
-        SpikeQuart,
-        InQuint,
-        OutQuint,
-        InOutQuint,
-        SpikeQuint,
-        InExpo,
-        OutExpo,
-        InOutExpo,
-        SpikeExpo,
-        InCircular,
-        OutCircular,
-        InOutCircular,
-        SpikeCircular,
-        EaseInBounce,
-        EaseOutBounce,
-        EaseInOutBounce,
-        SpikeBounce,
-        EaseInElastic,
-        EaseOutElastic,
-        EaseInOutElastic,
-        SpikeElastic,
-        EaseInBack,
-        EaseOutBack,
-        EaseInOutBack,
-        SpikeBack,
+        Sine,
+        Quadratic,
+        Cubic,
+        Quartic,
+        Quintic,
+        Exponetial,
+        Circular,
+        Bounce,
+        Elastic,
+        Back,
         Count
     }
+    
+    public static Function GetFunction(Style style, Mode mode)
+    {
+        switch (mode)
+        {
+            case Mode.In:
+                return GetIn(style);
+            case Mode.Out:
+                return GetOut(style);
+            case Mode.InOut:
+                return GetInOut(style);
+            case Mode.Spike:
+                return GetSpike(style);
+            default:
+                throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
+        }
+    }
 
-    //i want ease to be set with enum (for loops)
-    public static Function GetFunction(Style style)
+    private static Function GetIn(Style style)
     {
         switch (style)
         {
             case Style.Linear:
                 return Linear;
-            case Style.SpikeLinear:
-                return SpikeLinear;
-            case Style.InSine:
+            case Style.Sine:
                 return InSine;
-            case Style.OutSine:
-                return OutSine;
-            case Style.InOutSine:
-                return InOutSine;
-            case Style.SpikeSine:
-                return SpikeSine;
-            case Style.InQuad:
+            case Style.Quadratic:
                 return InQuad;
-            case Style.OutQuad:
-                return OutQuad;
-            case Style.InOutQuad:
-                return InOutQuad;
-            case Style.SpikeQuad:
-                return SpikeQuad;
-            case Style.InCub:
+            case Style.Cubic:
                 return InCub;
-            case Style.OutCub:
-                return OutCub;
-            case Style.InOutCub:
-                return InOutCub;
-            case Style.SpikeCub:
-                return SpikeCub;
-            case Style.InQuart:
+            case Style.Quartic:
                 return InQuart;
-            case Style.OutQuart:
-                return OutQuart;
-            case Style.InOutQuart:
-                return InOutQuart;
-            case Style.SpikeQuart:
-                return SpikeQuart;
-            case Style.InQuint:
+            case Style.Quintic:
                 return InQuint;
-            case Style.OutQuint:
-                return OutQuint;
-            case Style.InOutQuint:
-                return InOutQuint;
-            case Style.SpikeQuint:
-                return SpikeQuint;
-            case Style.InExpo:
+            case Style.Exponetial:
                 return InExpo;
-            case Style.OutExpo:
-                return OutExpo;
-            case Style.InOutExpo:
-                return InOutExpo;
-            case Style.SpikeExpo:
-                return SpikeExpo;
-            case Style.InCircular:
+            case Style.Circular:
                 return InCircular;
-            case Style.OutCircular:
-                return OutCircular;
-            case Style.InOutCircular:
-                return InOutCircular;
-            case Style.SpikeCircular:
-                return SpikeCircular;
-            case Style.EaseInBounce:
-                return EaseInBounce;
-            case Style.EaseOutBounce:
-                return EaseOutBounce;
-            case Style.EaseInOutBounce:
-                return EaseInOutBounce;
-            case Style.SpikeBounce:
-                return SpikeBounce;
-            case Style.EaseInElastic:
-                return EaseInElastic;
-            case Style.EaseOutElastic:
-                return EaseOutElastic;
-            case Style.EaseInOutElastic:
-                return EaseInOutElastic;
-            case Style.SpikeElastic:
-                return SpikeElastic;
-            case Style.EaseInBack:
-                return EaseInBack;
-            case Style.EaseOutBack:
-                return EaseOutBack;
-            case Style.EaseInOutBack:
-                return EaseInOutBack;
-            case Style.SpikeBack:
-                return SpikeBack;
+            case Style.Bounce:
+                return InBounce;
+            case Style.Elastic:
+                return InElastic;
+            case Style.Back:
+                return InBack;
+            case Style.Count:
+                break;
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(style), style, null);
         }
+        return null;
+    }
+    
+    private static Function GetOut(Style style)
+    {
+        switch (style)
+        {
+            case Style.Linear:
+                return Linear;
+            case Style.Sine:
+                return OutSine;
+            case Style.Quadratic:
+                return OutQuad;
+            case Style.Cubic:
+                return OutCub;
+            case Style.Quartic:
+                return OutQuart;
+            case Style.Quintic:
+                return OutQuint;
+            case Style.Exponetial:
+                return OutExpo;
+            case Style.Circular:
+                return OutCircular;
+            case Style.Bounce:
+                return OutBounce;
+            case Style.Elastic:
+                return OutElastic;
+            case Style.Back:
+                return OutBack;
+            case Style.Count:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(style), style, null);
+        }
+        return null;
+    }
+    
+    private static Function GetInOut(Style style)
+    {
+        switch (style)
+        {
+            case Style.Linear:
+                return Linear;
+            case Style.Sine:
+                return InOutSine;
+            case Style.Quadratic:
+                return InOutQuad;
+            case Style.Cubic:
+                return InOutCub;
+            case Style.Quartic:
+                return InOutQuart;
+            case Style.Quintic:
+                return InOutQuint;
+            case Style.Exponetial:
+                return InOutExpo;
+            case Style.Circular:
+                return InOutCircular;
+            case Style.Bounce:
+                return InOutBounce;
+            case Style.Elastic:
+                return InOutElastic;
+            case Style.Back:
+                return InOutBack;
+            case Style.Count:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(style), style, null);
+        }
+        return null;
+    }
+    
+    private static Function GetSpike(Style style)
+    {
+        switch (style)
+        {
+            case Style.Linear:
+                return SpikeLinear;
+            case Style.Sine:
+                return SpikeSine;
+            case Style.Quadratic:
+                return SpikeQuad;
+            case Style.Cubic:
+                return SpikeCub;
+            case Style.Quartic:
+                return SpikeQuart;
+            case Style.Quintic:
+                return SpikeQuint;
+            case Style.Exponetial:
+                return SpikeExpo;
+            case Style.Circular:
+                return SpikeCircular;
+            case Style.Bounce:
+                return SpikeBounce;
+            case Style.Elastic:
+                return SpikeElastic;
+            case Style.Back:
+                return SpikeBack;
+            case Style.Count:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(style), style, null);
+        }
+        return null;
     }
     
     #endregion
@@ -173,22 +210,6 @@ public static class EasingUtility
     {
         t = ease(t);
         return new Vector3(Interpolate(a.x, b.x, t), Interpolate(a.y, b.y, t), Interpolate(a.z, b.z, t));
-    }
-
-    //weighted average 
-    //todo test this later if the calculation is actually correct
-    public static float WeightedAverage(float a, float t, float slow)
-    {
-        t = (t * (slow - 1f) + a) / slow;
-        return t;
-    }
-    
-    //Helper functions
-    private static float tau = 2f * Mathf.PI;
-    
-    private static float Invert(float t)
-    {
-        return 1 - t;
     }
 
     #region Easing 
@@ -391,13 +412,13 @@ public static class EasingUtility
     #endregion
 
     #region Bounce
-    public static float EaseInBounce(float t)
+    public static float InBounce(float t)
     {
-        t = Invert(EaseOutBounce(Invert(t)));
+        t = Invert(OutBounce(Invert(t)));
         return t;
     }
 
-    public static float EaseOutBounce(float t)
+    public static float OutBounce(float t)
     {
         float offset = 2.75f;
         float scalar = 7.5625f;
@@ -421,21 +442,21 @@ public static class EasingUtility
         return t;
     }
 
-    public static float EaseInOutBounce(float t)
+    public static float InOutBounce(float t)
     {
-        t = t < 0.5f ? Invert(EaseOutBounce(1 - 2 * t)) / 2 : EaseOutBounce(2 * t - 1) / 2 + 0.5f;
+        t = t < 0.5f ? Invert(OutBounce(1 - 2 * t)) / 2 : OutBounce(2 * t - 1) / 2 + 0.5f;
         return t;
     }
     
     public static float SpikeBounce(float t)
     {
-       t = t < 0.5f ? Invert(EaseOutBounce(1 - 2 * t)) : Invert(EaseOutBounce( 2 * t - 1));
+       t = t < 0.5f ? Invert(OutBounce(1 - 2 * t)) : Invert(OutBounce( 2 * t - 1));
         return t;
     }
     #endregion
 
     #region Elast
-    public static float EaseInElastic(float t, float amplitude, float period)
+    public static float InElastic(float t, float amplitude, float period)
     {
         if (t <= 0f)
         {
@@ -449,23 +470,23 @@ public static class EasingUtility
         return t;
     }
     
-    public static float EaseInElastic(float t)
+    public static float InElastic(float t)
     {
-        t = EaseInElastic(t, 1f, 3f);
+        t = InElastic(t, 1f, 3f);
         return t;
     }
     
-    public static float EaseOutElastic(float t)
+    public static float OutElastic(float t)
     {
-        t = Invert(EaseInElastic(Invert(t)));
+        t = Invert(InElastic(Invert(t)));
         return t;
     }
     
-    public static float EaseInOutElastic(float t)
+    public static float InOutElastic(float t)
     {
         float amplitude = 1f * 2f;
         float period = 3f * 1.645f;
-        t = t <= 0.5f ? EaseInElastic(t, amplitude, period) / 2 : Invert(EaseInElastic(Invert(t), amplitude, period)) / 2 + 0.5f;
+        t = t <= 0.5f ? InElastic(t, amplitude, period) / 2 : Invert(InElastic(Invert(t), amplitude, period)) / 2 + 0.5f;
         return t;
     }
 
@@ -473,39 +494,56 @@ public static class EasingUtility
     {
         float amplitude = 1f * 2f;
         float period = 3f * 1.645f;
-        t = t <= 0.5f ? EaseInElastic(t, amplitude, period) :  EaseInElastic(Invert(t), amplitude, period);
+        t = t <= 0.5f ? InElastic(t, amplitude, period) :  InElastic(Invert(t), amplitude, period);
         return t;
     }
     #endregion
     
-    #region Back Small
-    public static float EaseInBack(float t)
+    #region Back
+    public static float InBack(float t)
     {
         float a = 1.70158f;
         t = (a + 1) * InCub(t) - a * t * t;
         return t;
     }
     
-    public static float EaseOutBack(float t)
+    public static float OutBack(float t)
     {
-        t = Invert(EaseInBack(Invert(t)));
+        t = Invert(InBack(Invert(t)));
         return t;
     }
     
-    public static float EaseInOutBack(float t)
+    public static float InOutBack(float t)
     {
         float p = 1.75f;
-        t = t <= 0.5f ? EaseInBack(p * t) : Invert(EaseInBack(p * Invert(t)));
+        t = t <= 0.5f ? InBack(p * t) : Invert(InBack(p * Invert(t)));
         return t;
     }
 
     public static float SpikeBack(float t)
     {
         float p = 2f;
-        t = t <= 0.5f ? EaseInBack(p * t) : EaseInBack(p * Invert(t));
+        t = t <= 0.5f ? InBack(p * t) : InBack(p * Invert(t));
         return t;
     }
     #endregion
 
     #endregion \\Easing
+    
+    //Helper functions
+    private static float tau = 2f * Mathf.PI;
+    
+    private static float Invert(float t)
+    {
+        return 1 - t;
+    }
+    
+    //weighted average 
+    //todo test this later if the calculation is actually correct
+    public static float WeightedAverage(float a, float t, float slow)
+    {
+        t = (t * (slow - 1f) + a) / slow;
+        return t;
+    }
+
 }
