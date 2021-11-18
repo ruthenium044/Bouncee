@@ -1,6 +1,34 @@
 using System;
 using UnityEngine;
 
+public static class QuickMath
+{
+    public static unsafe uint AsInt(float f)
+    {
+        return *(uint*) &f; 
+    }
+    
+    public static unsafe float AsFloat(uint i)
+    {
+        return *(float*) &i; 
+    }
+
+    public static float Pow(float x, float p)
+    {
+        return AsFloat((uint)(p * (AsInt(x) - 1)) + 1) ;
+    }   
+    
+    public static unsafe float Qsqrt(float x)
+    {
+        float halfX = 0.5f * x;
+        int i = *(int*) &x;
+        i = 0x5f375a86 - (i >> 1);
+        x = *(float*) &i;
+        x = x * (1.5f - halfX * x * x);
+        return x;
+    }
+}
+
 public static class EasingUtility
 {
     public delegate float Function(float t);
