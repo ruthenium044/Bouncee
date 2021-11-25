@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Drawz
@@ -25,6 +26,28 @@ namespace Drawz
                 Vector3 initialRelativePosition = new Vector3(0, radius, 0);
                 lineRenderer.SetPosition(i, transform.position + rotationMatrix.MultiplyPoint(initialRelativePosition));
             }
+        }
+
+        private void Draw2()
+        {
+            List<Vector3> points = new List<Vector3>();
+            for (int i = 0; i < vertexCount; i++)
+            {
+                float t = i / (float) vertexCount;
+                points.Add(Circle(t));
+            }
+            List<Vector3> pointsToDraw = new List<Vector3>();
+            for (int i = 0; i < points.Count; i++)
+            {
+                //Gizmos.DrawLine(points[i], points[(i + d) % points.Count]);
+            }
+        }
+        
+        private Vector3 Circle(float t)
+        {
+            float x = Mathf.Cos(t * Mathf.PI * 2) * radius;
+            float y = Mathf.Sin(t * Mathf.PI * 2) * radius;
+            return new Vector3(x, y, 0f);
         }
     }
 }
