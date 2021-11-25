@@ -7,12 +7,7 @@ namespace Drawz
         [SerializeField] private Transform startPos;
         [SerializeField] private Transform endPos;
         [SerializeField] private Transform tangent;
-    
-        private void Start()
-        {
-            Initialize();
-        }
-
+        
         public override void Draw()
         {
             Vector3 pos0 = startPos.position;
@@ -26,11 +21,6 @@ namespace Drawz
                 lineRenderer.SetPosition(i, B);
                 t += (1 / (float)vertexCount);
             }
-        }
-
-        private void Update()
-        {
-            Draw();
         }
     }
 }

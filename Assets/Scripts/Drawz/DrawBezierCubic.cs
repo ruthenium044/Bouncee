@@ -8,11 +8,7 @@ namespace Drawz
         [SerializeField] private Transform endPos;
         [SerializeField] private Transform startTangent;
         [SerializeField] private Transform endTangent;
-    
-        private void Start()
-        {
-            Initialize();
-        }
+        
 
         public override void Draw()
         {
@@ -31,10 +27,6 @@ namespace Drawz
                 t += (1 / (float)vertexCount);
             }
         }
-    
-        private void Update()
-        {
-            Draw();
-        }
+        
     }
 }

@@ -1,32 +1,18 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Drawz;
 using UnityEngine;
 
-public class DrawBouncee : DrawShapes
+namespace Drawz
 {
-   
-    void Start()
+    public class DrawBouncee : DrawShapes
     {
-        Initialize();
-    }
-
-    public override void Draw()
-    {
-        lineRenderer.positionCount = vertexCount;
-        float x = 0f;
-        float y;
-        for (int i = 0; i < lineRenderer.positionCount; i++)
+        public override void Draw()
         {
-            x += 0.01f;
-            y = Mathf.Sin(x);
-            lineRenderer.SetPosition(i, new Vector3(x, y, 0) + transform.position);
+            float x, y;
+            for (int i = 0; i < vertexCount; i++)
+            {
+                x = i / (float) vertexCount;
+                y = EasingUtility.OutElastic(x);
+                lineRenderer.SetPosition(i, new Vector3(x, y, 0) + transform.position);
+            }
         }
-    }
-
-    private void Update()
-    {
-        Draw();
     }
 }

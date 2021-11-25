@@ -7,12 +7,6 @@ namespace Drawz
         [SerializeField] private float amplitude;
         [SerializeField] private float wavelength;
         
-        private void Start()
-        {
-            Initialize();
-            Draw();
-        }
-
         public override void Draw()
         {
             float x = 0f;

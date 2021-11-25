@@ -12,7 +12,7 @@ namespace Drawz
         [SerializeField] private bool loop;
         protected LineRenderer lineRenderer;
 
-        protected void Initialize()
+        public virtual void Start()
         {
             lineRenderer = gameObject.AddComponent<LineRenderer>();
             lineRenderer.material = new Material(material);
@@ -20,6 +20,11 @@ namespace Drawz
             lineRenderer.endWidth = lineSize.y;
             lineRenderer.loop = loop;
             lineRenderer.positionCount = vertexCount;
+        }
+  
+        public virtual void  Update()
+        {
+            Draw();
         }
         
         public abstract void Draw();

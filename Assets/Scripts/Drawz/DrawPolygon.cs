@@ -6,13 +6,7 @@ namespace Drawz
     public class DrawPolygon : DrawShapes
     {
         [SerializeField] private float radius;
-
-        private void Start()
-        {
-            Initialize();
-            Draw();
-        }
-
+        
         public override void Draw()
         {
             float angle = 2 * Mathf.PI / vertexCount;
