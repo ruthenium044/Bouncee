@@ -8,7 +8,7 @@ namespace Drawz
     {
         [SerializeField] private Material material;
         [SerializeField] private Vector2 lineSize;
-        [SerializeField] protected int vertexCount;
+        [SerializeField] public int vertexCount;
         [SerializeField] private bool loop;
         protected LineRenderer lineRenderer;
 
