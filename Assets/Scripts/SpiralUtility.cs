@@ -9,7 +9,7 @@ public class SpiralUtility : MonoBehaviour
     [SerializeField] private int period = 1;
     [SerializeField] private int detailLevel = 36;
     [SerializeField] private bool circular;
-    [SerializeField] private float lineThickness = 6f;
+    [SerializeField] private double lineThickness = 6.0;
     [Header("Bezie")] 
     [SerializeField] private Transform starPoint;
     [SerializeField] private Transform startTangent;
@@ -32,7 +32,7 @@ public class SpiralUtility : MonoBehaviour
         {
             float t = i / detailCount;
             Handles.color = Color.Lerp(Color.green, Color.blue + Color.red, t);
-            Handles.DrawAAPolyLine(lineThickness, points[i], points[i + 1]);
+            Handles.DrawAAPolyLine((float)lineThickness, points[i], points[i + 1]);
         }
         
         List<Vector3> circlePoints = new List<Vector3>();

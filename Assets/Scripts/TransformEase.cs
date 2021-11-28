@@ -1,75 +1,109 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Reflection;
 
 public class TransformEase : MonoBehaviour
 {
+	[SerializeField] private UnityEasingTimer timer = new UnityEasingTimer();
+
 	[System.Serializable]
-	public struct State
+	public struct Signature
 	{
-		[SerializeField] public Vector3 position;
-		[SerializeField] public Vector3 rotation;
-		[SerializeField] public Vector3 scale;
+		private Component context;
+		private MemberInfo valueMember;
+
+		public Component Context => context;
+		public MemberInfo ValueMember => valueMember;
+
+		public Signature(Component context, MemberInfo member)
+		{
+			this.context = context;
+			this.valueMember = member;
+		}
 	}
 
-	[SerializeField] private State start;
-	[SerializeField] private State end;
+	[System.Serializable]
+	public class EaseValue
+	{
+		public delegate object Lerp(object a, object b, float t);	
 
-	[SerializeField] private UnityEasingTimer timer = new UnityEasingTimer();
+		public object from;
+		public object to;
+		private Lerp lerp;
+
+
+		public EaseValue(Signature signature, System.Type type)
+		{
+			var valueMember = signature.ValueMember;
+			var context = signature.Context;
+			this.lerp = GetLerp(type);
+
+			switch (valueMember.MemberType) {
+				case MemberTypes.Field:
+					this.from = (valueMember as FieldInfo).GetValue(context);
+					this.to = (valueMember as FieldInfo).GetValue(context);
+					break;
+
+				case MemberTypes.Property:
+					this.from = (valueMember as PropertyInfo).GetValue(context);
+					this.to = (valueMember as PropertyInfo).GetValue(context);
+					break;
+
+				default:
+					throw new UnityException("Cannot use member");
+			}
+		}
+
+		private static Lerp GetLerp(System.Type type) 
+		{
+			if(type == typeof(Vector3)) {
+				return ((a, b, t) => Vector3.Lerp((Vector3)a, (Vector3)b, t));
+			}
+			else if (type == typeof(Vector2)) {
+				return ((a, b, t) => Vector2.Lerp((Vector2)a, (Vector2)b, t));
+			}
+			else if (type == typeof(float)) {
+				return ((a, b, t) => Mathf.Lerp((float)a, (float)b, t));
+			}
+
+			throw new UnityException("Cannot find fitting lerp");
+		}
+
+		public void Update(Signature signature, float t)
+		{
+			var valueMember = signature.ValueMember;
+			var context = signature.Context;
+			switch (valueMember.MemberType) {
+				case MemberTypes.Field:
+					(valueMember as FieldInfo).SetValue(context, lerp(from, to, t));
+					break;
+
+				case MemberTypes.Property:
+					(valueMember as PropertyInfo).SetValue(context, lerp(from, to, t));
+					break;
+
+				default:
+					throw new UnityException("Cannot use member");
+			}
+
+		}
+	}
+
+	private Dictionary<Signature, EaseValue> easeSet = new Dictionary<Signature, EaseValue>();
 
 	private void Awake()
 	{
 		timer.Start(this);
 	}
 
-	public void OnStart()
-	{
-		Apply(start);
-	}
-
 	public void Evaluate(EaseData t)
 	{
-		transform.position = EasingUtility.Ease(EasingUtility.Linear, start.position, end.position, (float)t.Eased);
-		transform.rotation = Quaternion.Euler(EasingUtility.Ease(EasingUtility.InSine, start.rotation, end.rotation, (float)t.Eased));
-		transform.localScale = EasingUtility.Ease(EasingUtility.Linear, start.scale, end.scale, (float)t.Eased);
+		foreach(var e in easeSet) {
+			e.Value.Update(e.Key, (float)t.Eased);
+		}
 	}
 
-	public void OnEnd()
-	{
-		Apply(end);
-	}
-
-	public void SetStartPosition(Vector3 position)
-	{
-		start.position = position;
-	}
-	public void SetStartRotation(Vector3 rotation)
-	{
-		start.rotation = rotation;
-	}
-	public void SetStartScale(Vector3 scale)
-	{
-		start.scale = scale;
-	}
-	public void SetEndPosition(Vector3 position)
-	{
-		end.position = position;
-	}
-	public void SetEndRotation(Vector3 rotation)
-	{
-		end.rotation = rotation;
-	}
-	public void SetEndScale(Vector3 scale)
-	{
-		end.scale = scale;
-	}
-
-	public void Apply(State state)
-	{
-		transform.position = state.position;
-		transform.rotation = Quaternion.Euler(state.rotation);
-		transform.localScale = state.scale;
-	}
 
 	private void Update()
 	{
@@ -90,10 +124,8 @@ public class TransformEase : MonoBehaviour
 	private void OnDrawGizmosSelected()
 	{
 		Gizmos.color = Color.green;
-		Gizmos.DrawWireCube(start.position, start.scale / 10.0f);
 
 
 		Gizmos.color = Color.red;
-		Gizmos.DrawWireCube(end.position, end.scale / 10.0f);
 	}
 }

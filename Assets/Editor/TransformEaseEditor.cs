@@ -1,100 +1,304 @@
 using UnityEditor;
 using UnityEngine;
-
+using System.Collections.Generic;
+using System.Reflection;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 [CustomEditor(typeof(TransformEase))]
 
 public class TransformEaseEditor : Editor
 {
-    private bool isInStartEdit = false;
-    private bool isInEndEdit = false;
-    private GameObject phantom = null;
+    private readonly IEnumerable<System.Type> TypeFilter = new System.Type[] { typeof(float), 
+                                                                               typeof(Vector2), 
+                                                                               typeof(Vector3), 
+                                                                               typeof(Color)};
 
-    private const string StartEditOn =  "Edit Start Transform: On";
-    private const string StartEditOff = "Edit Start Transform: Off";
+    private const BindingFlags MemberFlags = BindingFlags.Instance |
+                                             BindingFlags.Public |
+                                             BindingFlags.NonPublic | 
+                                             BindingFlags.GetProperty |
+                                             BindingFlags.SetProperty;
 
-    private const string EndEditOn =  "Edit End Transform: On";
-    private const string EndEditOff = "Edit End Transform: Off";
+    GameObject gameObject = null;
+    TransformEase ease = null;
+    private class TypeBreakDown
+    {
+        private object context = null;
+        private List<FieldInfo> fields = new List<FieldInfo>();
+        private List<PropertyInfo> properties = new List<PropertyInfo>();
+        private List<TypeBreakDown> children = new List<TypeBreakDown>();
 
-	private void OnEnable()
-	{
-        isInEndEdit = false;
+        private TypeBreakDown()
+        {
+
+		}
+
+        public static List<TypeBreakDown> Create(params object[] objects)
+        {
+            List<TypeBreakDown> list = new List<TypeBreakDown>();
+            foreach(var obj in objects) {
+                list.Add(new TypeBreakDown(obj));
+            }
+            return list;
+        }
+
+        private static Stack<TypeBreakDown> Create(TypeBreakDown current, object context)
+        {
+            Stack<TypeBreakDown> stack = new Stack<TypeBreakDown>();
+            current.context = context;
+            var type = current.context.GetType();
+            while (type != null) {
+                var fields = type.GetFields(MemberFlags);
+                var properties = type.GetProperties(MemberFlags);
+    
+                current.fields.AddRange(fields.Where(item => (item.FieldType.IsValueType &&
+                                                              !item.FieldType.IsPointer)));
+                current.properties.AddRange(properties.Where(item => (item.PropertyType.IsValueType &&
+                                                                      !item.PropertyType.IsPointer &&
+                                                                      item.CanRead &&
+                                                                      item.CanWrite)));
+                foreach (var field in current.fields) {
+                    var next = new TypeBreakDown();
+                    next.context = field.FieldType.IsValueType ? context : field.GetValue(current.context);
+                    stack.Push(next);
+                }
+                foreach (var property in current.properties) {
+                    var next = new TypeBreakDown();
+                    next.context = property.PropertyType.IsValueType ? context : property.GetValue(current.context);
+                    stack.Push(next);
+                }
+                type = type.BaseType;
+                break;
+            }
+
+            return stack;
+        }
+
+        public TypeBreakDown(object obj)
+        {
+            context = obj;
+
+            var stack = Create(this, obj);
+			while (stack.Count > 0) {
+				children.Add(stack.Pop());
+			}
+		}
+
+        public delegate void OnAction(TypeBreakDown leaf, List<TypeBreakDown> branch);
+        public void ForEachBranch(OnAction action)
+        {
+            foreach (var child in children) {
+                var branch = new List<TypeBreakDown>{ this };
+                ForEachBranchRecurse(action, child, branch);
+            }
+		}
+
+        private static void ForEachBranchRecurse(OnAction action, TypeBreakDown current, List<TypeBreakDown> branch) {
+            if(current.children.Count == 0) {
+                action(current, branch);
+			} 
+            else {
+                foreach (var child in current.children) {
+                    branch.Add(current);
+                    ForEachBranchRecurse(action, child, branch);
+
+                }
+            }
+		}
     }
+
+    //private HashSet<(object context, object variable)> selectedData = new HashSet<(object context, object variable)>();
+
+    HashSet<Component> components = new HashSet<Component>();
+    Dictionary<Component, List<FieldInfo>> componentFields = new Dictionary<Component, List<FieldInfo>>();
+    Dictionary<Component, List<PropertyInfo>> componentProperties = new Dictionary<Component, List<PropertyInfo>>();
+    GenericMenu menu = new GenericMenu();
+
+    private void OnEnable()
+	{
+        ease = serializedObject.targetObject as TransformEase;
+
+        gameObject = ease.gameObject;
+
+        var allComponents = gameObject.GetComponents<Component>();
+		componentFields.Clear();
+		componentProperties.Clear();
+		components.Clear();
+
+		foreach (var component in allComponents) {
+			var componentType = component.GetType();
+			if (!componentFields.ContainsKey(component)) {
+				componentFields[component] = new List<FieldInfo>();
+			}
+			if (!componentProperties.ContainsKey(component)) {
+				componentProperties[component] = new List<PropertyInfo>();
+			}
+			components.Add(component);
+
+			var type = componentType;
+			while (type != null) {
+				var fields = type.GetFields(MemberFlags);
+				var properties = type.GetProperties(MemberFlags);
+
+				componentFields[component].AddRange(fields.Where(item => (item.FieldType.IsValueType && 
+                                                                          !item.FieldType.IsPointer &&
+                                                                          TypeFilter.Contains(item.FieldType))));
+                                                                          
+				componentProperties[component].AddRange(properties.Where(item => (item.PropertyType.IsValueType && 
+                                                                                  !item.PropertyType.IsPointer && 
+                                                                                  item.CanRead && 
+                                                                                  item.CanWrite &&
+                                                                                  TypeFilter.Contains(item.PropertyType))));
+				type = type.BaseType;
+				break;
+			}
+		}
+	}
+
+	private void CreateGenericMenu()
+	{
+		menu = new GenericMenu();
+
+        var lookup = ease.GetType().GetField("easeSet", MemberFlags).GetValue(ease) as Dictionary<TransformEase.Signature, TransformEase.EaseValue>;
+        
+		foreach (var component in components) {
+			foreach (var field in componentFields[component]) {
+                var signature = new TransformEase.Signature(component, field);
+                menu.AddItem(new GUIContent(FormatPath(component.GetType().Name, field.FieldType.Name, field.Name)),
+                                            lookup.ContainsKey(signature),
+											(that) =>
+											{
+												if (lookup.ContainsKey(signature)) {
+                                                    lookup.Remove(signature);
+												}
+												else {
+                                                    lookup.Add(signature, 
+                                                               new TransformEase.EaseValue(signature, field.FieldType));
+												}
+											}, field);
+
+			}
+			foreach (var property in componentProperties[component]) {
+                var signature = new TransformEase.Signature(component, property);
+                menu.AddItem(new GUIContent(FormatPath(component.GetType().Name, property.PropertyType.Name, property.Name)),
+                                            lookup.ContainsKey(signature),
+                                            (that) =>
+                                            {
+                                                if (lookup.ContainsKey(signature)) {
+                                                    lookup.Remove(signature);
+                                                }
+                                                else {
+                                                    lookup.Add(signature,
+                                                               new TransformEase.EaseValue(signature, property.PropertyType));
+                                                }
+                                            }, property);
+            }
+		}
+	}
 
 	private void OnDisable()
 	{
-        if(phantom != null) {
-            DestroyImmediate(phantom);
-        }
-        isInEndEdit = false;
+
     }
 
-	public override void OnInspectorGUI()
+    private string FormatPath(string componentName, string typeName, string memberName)
+    {
+        IEnumerable<string> StringToWordsWithSpace(string that) {
+            return Regex.Matches(that, @"([A-Z]([0-9]|[a-z])+)").
+                         Cast<Match>().
+                         Select(m => m.Value);
+        }
+        var title = string.Format("{0}/{1}/{2}", string.Join(" ", StringToWordsWithSpace(char.ToUpper(componentName[0]) + componentName.Substring(1))),
+                                            string.Join(" ", StringToWordsWithSpace(char.ToUpper(typeName[0]) + typeName.Substring(1))),
+                                            string.Join(" ", StringToWordsWithSpace(char.ToUpper(memberName[0]) + memberName.Substring(1))));
+        return title;
+	}
+
+    public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
-        
-        EditorGUILayout.Space(20f);
 
-        var target = serializedObject.targetObject as TransformEase;
+        var lookup = ease.GetType().GetField("easeSet", MemberFlags).GetValue(ease) as Dictionary<TransformEase.Signature, TransformEase.EaseValue>;
 
-        if(!isInEndEdit) {
-            if (GUILayout.Button(isInStartEdit ? StartEditOn : StartEditOff)) {
-                ToggleEditMode(target, ref isInStartEdit, (TransformEase that) =>
-                {
-                    that.OnStart();
-                });
+        EditorGUILayout.Space(60.0f);
+
+        const float removeWidth = 60.0f;
+        // 40 = label for value
+        // 20 = padding
+        var width = (EditorGUIUtility.currentViewWidth - removeWidth - 40.0f - 20.0f) / 2;
+
+
+        object DrawMemberValue(string label, object value)
+        {
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField(label, GUILayout.MaxWidth(40.0f));
+            var type = value.GetType();
+            if (type == typeof(Vector3)) {
+                value = EditorGUILayout.Vector3Field(string.Empty, (Vector3)value, GUILayout.MaxWidth(width));
             }
-		}
-
-        if(!isInStartEdit) {
-            if(GUILayout.Button(isInEndEdit ? EndEditOn : EndEditOff)) {
-                ToggleEditMode(target, ref isInEndEdit, (TransformEase that) =>
-                {
-                    that.OnEnd();
-                });
+            else if (type == typeof(Vector2)) {
+                value = EditorGUILayout.Vector2Field(string.Empty, (Vector2)value, GUILayout.MaxWidth(width));
             }
-		}
-
-
-        ActiveEditorTracker.sharedTracker.isLocked = isInEndEdit || isInStartEdit;
-        if (isInStartEdit) {
-            InStartEditMode(target);
+            else if (type == typeof(float)) {
+                value = EditorGUILayout.FloatField(string.Empty, (float)value, GUILayout.MaxWidth(width));
+            }
+            else if (type == typeof(Color)) {
+                value = EditorGUILayout.ColorField((Color)value, GUILayout.MaxWidth(width));
+            }
+            EditorGUILayout.EndHorizontal();
+            return value;
         }
-        else if (isInEndEdit) {
-            IsEndEditMode(target);
-		}
-    }
 
-    private void InStartEditMode(TransformEase target)
-    {
-        target.SetStartPosition(phantom.transform.position);
-        target.SetStartRotation(phantom.transform.rotation.eulerAngles);
-        target.SetStartScale(phantom.transform.localScale);
-    }
+        CreateGenericMenu();
 
-    private void IsEndEditMode(TransformEase target)
-    {
-        target.SetEndPosition(phantom.transform.position);
-        target.SetEndRotation(phantom.transform.rotation.eulerAngles);
-        target.SetEndScale(phantom.transform.localScale);
-    }
+        TransformEase.Signature? remove = null;
+        foreach (var element in lookup) {
+            EditorGUILayout.BeginHorizontal();
+            var style = GUILayout.MaxWidth(width);
 
-    private void ToggleEditMode(TransformEase target, ref bool toToggle, System.Action<TransformEase> transformSetter)
-    {
-        toToggle = !toToggle;
+            EditorGUILayout.BeginVertical();
+            if (GUILayout.Button("X", GUILayout.MaxWidth(removeWidth))) {
+                remove = element.Key;
+            }
+            EditorGUILayout.EndVertical();
 
-        if (toToggle) {
-            phantom = Instantiate(target.gameObject);
-            transformSetter(phantom.GetComponent<TransformEase>());
+            var context = element.Key.Context;
+            if (element.Key.ValueMember is FieldInfo) {
+                var field = element.Key.ValueMember as FieldInfo;
+                EditorGUILayout.LabelField(new GUIContent(FormatPath(field.DeclaringType.Name,
+                                                                     field.FieldType.Name,
+                                                                     field.Name).
+                                                                        Replace('/', ' ')),
+                                           style);
+            }
+            else if (element.Key.ValueMember is PropertyInfo) {
+                var property = element.Key.ValueMember as PropertyInfo;
+                EditorGUILayout.LabelField(new GUIContent(FormatPath(property.DeclaringType.Name,
+                                                                     property.PropertyType.Name,
+                                                                     property.Name).
+                                                                        Replace('/', ' ')),
+                                           style);
+            }
+            else { // ToString Fallback
+                EditorGUILayout.LabelField(new GUIContent(element.Key.ValueMember.ToString()), style);
+            }
 
-            ActiveEditorTracker.sharedTracker.isLocked = true;
-            Selection.activeTransform = phantom.transform;
-            DestroyImmediate(phantom.GetComponent<TransformEase>());
+            EditorGUILayout.BeginVertical();
+            element.Value.from = DrawMemberValue("From: ", element.Value.from);
+            element.Value.to = DrawMemberValue("To: ", element.Value.to);
+            EditorGUILayout.EndVertical();
+
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.Space(10.0f);
         }
-        else {
-            DestroyImmediate(phantom);
-            ActiveEditorTracker.sharedTracker.isLocked = false;
-            Selection.activeTransform = target.transform;
+
+        if (remove != null) {
+            lookup.Remove(remove.Value);
+        }
+
+        if (GUILayout.Button("Add Variable/Property")) {
+            menu.ShowAsContext();
         }
     }
 }
