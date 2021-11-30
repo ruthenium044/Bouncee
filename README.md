@@ -2,7 +2,7 @@
 
 Easing library in progress
 
-The math document of all the functions: [:chart_with_upwards_trend:](https://github.com/DeadMadman/Bouncee/blob/eb46ddae3406cadb2a822aff772c21cc1c8c971f/BounceeMD/Bouncee.pdf
+The math document of all the functions: [:page_facing_up:](https://github.com/DeadMadman/Bouncee/blob/eb46ddae3406cadb2a822aff772c21cc1c8c971f/BounceeMD/Bouncee.pdf
 ) 
 
 Implementation differs but the essence of those functions stays
