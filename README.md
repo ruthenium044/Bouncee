@@ -8,7 +8,21 @@ Easing curve styles (all groups have these):
 * Ease in out
 * Ease Spike
 
-Animation styles:
+Easing groups:
+* Linear
+* Sinusoidal
+* Quadratic
+* Cubic
+* Quartic
+* Quintic
+* Exponential
+* Circular
+* Bounce
+* Elastic
+* Back
+* More WIP
+
+Animation styles (WIP):
 * Repeat count or infinite
   * Loop
     * Forwards
@@ -17,9 +31,10 @@ Animation styles:
     * Forwards
     * Backwards
 
-Properties
+Properties that function with easing: 
 * Position
 * Rotation
 * Scale
 * Alpha
 * Gradients
+* Everything else
