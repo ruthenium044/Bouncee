@@ -407,7 +407,7 @@ public static class EasingUtility
 
     public static float SpikeCircular(float t)
     {
-        t = t < 0.5f ? 1 - Mathf.Sqrt(1 - 4 * Mathf.Pow(t, 2)) : 1 - Mathf.Sqrt(1 - Mathf.Pow(2 * t - 2, 2));
+        t = t < 0.5f ? 1 - Mathf.Sqrt(1 - 4 * t * t) : 1 - Mathf.Sqrt(1 - (2 * t - 2) * (2 * t - 2));
         return t;
     }
     #endregion
@@ -467,7 +467,7 @@ public static class EasingUtility
         {
             return 1;
         }
-        t = - InQuad(t * amplitude) * Mathf.Sin((t - 0.75f) * tau * period);
+        t = - InQuad(t * amplitude) * QuickMath.SinPi((t - 0.75f) * 2 * period);
         return t;
     }
     

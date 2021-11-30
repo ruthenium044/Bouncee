@@ -4,9 +4,23 @@ using UnityEngine;
 
 public static class QuickMath
 {
-    private static float SinPi(float x) //todo test it
+    public static float SinPi(float x) //todo test it
     {
-        return CosPi(x + 0.5f) + 1;
+        float left = x % 2.0f;
+        int multiplier = (int) ((x - left) / 2);
+        x -= 2 * multiplier;
+        
+        x = 0.5f - x;
+        float x2 = x * x;
+        float x4 = x2 * x2;
+        float x6 = x4 * x2;
+      
+        const float fa = 8.0f / 9.0f;
+        const float fb = 34.0f / 9.0f;
+        const float fc = 44.0f / 9.0f;
+      
+        x = - ( fa * x6 - fb * x4 + fc * x2 - 1 );
+        return x;
     }
     
     public static float CosPi(float x)
