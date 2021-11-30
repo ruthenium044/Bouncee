@@ -23,3 +23,4 @@ Properties
 * Scale
 * Alpha
 * Gradients
+* Everything else
