@@ -1,5 +1,13 @@
 # Bouncee
 
+Easing library in progress
+
+Yhe math document of all the functions can be found [here](https://github.com/DeadMadman/Bouncee/blob/eb46ddae3406cadb2a822aff772c21cc1c8c971f/BounceeMD/Bouncee.pdf
+)
+
+Implementation differs but the essence of those functions stays
+
+
 ## Structure
 
 Easing curve styles (all groups have these):
