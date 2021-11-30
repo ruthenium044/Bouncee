@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +12,9 @@ public class DrawGraph : MonoBehaviour
 
     [HideInInspector] public List<float> x;
     [HideInInspector] public List<float> y;
+    
+    [SerializeField] private EasingUtility.Style style;
+    [SerializeField] private EasingUtility.Mode mode;
 
     void Awake()
     {
@@ -40,5 +44,10 @@ public class DrawGraph : MonoBehaviour
         {
             lineRenderer.SetPosition(i, new Vector3(x[i], y[i], 0) + transform.position);
         }
+    }
+
+    private void Update()
+    {
+        Draw(this, (int) style, (int) mode);
     }
 }

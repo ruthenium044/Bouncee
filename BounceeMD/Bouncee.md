@@ -31,6 +31,16 @@ table th:nth-of-type(4) { width: 37%; }
 | InOut | $f(x) = -0.5 cos(x \pi) + 0.5$                          | $\{ 0 \le x \le 1\}$                              | <img src="./easeLong/6ease.png"> |
 | Spike | $f(x) = -cos(x \pi) + 1$ <br /> $g(x) = cos(x \pi) + 1$ | $\{ 0 \le x \le 0.5\}$ <br /> $\{0.5 < x \le 1\}$ | <img src="./easeLong/7ease.png"> |
 
+## Blinn-Wyvill Approximation to the Raised Inverted Cosine
+Optimization for the sinus functions
+
+| Name  | Function                                                                                                     | Domain                                            |
+| ----- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------- |
+| In    | $f(x) = 8(0.5x)^6 / 9 - 34(0.5x)^4 / 9 + 44(0.5x)^2 / 9$                                                     | $\{ 0 \le x \le 1\}$                              |
+| Out   | $f(x) = 8(0.5(1 - x))^6 / 9 - 34(0.5(1 - x))^4 / 9 + 44(0.5(1 - x))^2 / 9 - 1$                               | $\{ 0 \le x \le 1\}$                              |
+| InOut | $f(x) = 4x^6 / 9 - 17x^4 / 9 + 22x^2 / 9$                                                                    | $\{ 0 \le x \le 1\}$                              |
+| Spike | $f(x) = 8x^6 / 9 - 34x^4 / 9 + 44x^2 / 9$ <br /> $g(x) = 8(1 - x)^6 / 9 - 34(1 - x)^4 / 9 + 44(1 - x)^2 / 9$ | $\{ 0 \le x \le 0.5\}$ <br /> $\{0.5 < x \le 1\}$ |
+
 <div style="page-break-after: always;"></div> <br /> <br />
 
 ## Quadratic
@@ -152,16 +162,13 @@ p = 2f (for the spike)
 
 | Name  | Function                                                                                | Domain                                      | Graph                             |
 | ----- | --------------------------------------------------------------------------------------- | ------------------------------------------- | --------------------------------- |
-| In    | $f(x) = =(a + 1)x^3 - ax^2 $                                                            | $\{ 0 \le x \le 1\}$                        | <img src="./easeLong/40ease.png"> |
+| In    | $f(x) = (a + 1)x^3 - ax^2$                                                              | $\{ 0 \le x \le 1\}$                        | <img src="./easeLong/40ease.png"> |
 | Out   | $f(x) = 1 - (a + 1)(1 - x)^3 + a(1 - x)^2$                                              | $\{ 0 \le x \le 1\}$                        | <img src="./easeLong/41ease.png"> |
 | InOut | $f(x) = (a + 1)(px)^3 - a(px)^2$ <br /> $g(x) = 1 - (a + 1) (p(1 - x))^3 - a(p(1-x))^2$ | $\{ 0 < x < 0.5\}$ <br /> $\{0.5 < x < 1\}$ | <img src="./easeLong/42ease.png"> |
 | Spike | $f(x) = (a + 1) (px)^3 - a(px)^2$ <br /> $g(x) = (a + 1) (p(1 - x))^3 - a(p(1 - x))^2$  | $\{ 0 < x < 0.5\}$ <br /> $\{0.5 < x < 1\}$ | <img src="./easeLong/43ease.png"> |
 
-  
-Polynomial shaping:
-## Inverted Cos
-## Double Cubic
-## Double Cubic Blend
-## Double Odd
+<div style="page-break-after: always;"></div>  <br />
+
+---
 
 </body>

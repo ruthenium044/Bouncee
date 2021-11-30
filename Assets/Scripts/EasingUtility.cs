@@ -48,6 +48,7 @@ public static class EasingUtility
     {
         Linear,
         Sine,
+        SineAprox,
         Quadratic,
         Cubic,
         Quartic,
@@ -85,6 +86,8 @@ public static class EasingUtility
                 return Linear;
             case Style.Sine:
                 return InSine;
+            case Style.SineAprox:
+                return InSineAprox;
             case Style.Quadratic:
                 return InQuad;
             case Style.Cubic:
@@ -119,6 +122,8 @@ public static class EasingUtility
                 return Linear;
             case Style.Sine:
                 return OutSine;
+            case Style.SineAprox:
+                return OutSineAprox;
             case Style.Quadratic:
                 return OutQuad;
             case Style.Cubic:
@@ -153,6 +158,8 @@ public static class EasingUtility
                 return Linear;
             case Style.Sine:
                 return InOutSine;
+            case Style.SineAprox:
+                return InOutSineAprox;
             case Style.Quadratic:
                 return InOutQuad;
             case Style.Cubic:
@@ -187,6 +194,8 @@ public static class EasingUtility
                 return SpikeLinear;
             case Style.Sine:
                 return SpikeSine;
+            case Style.SineAprox:
+                return SpikeSineAprox;
             case Style.Quadratic:
                 return SpikeQuad;
             case Style.Cubic:
@@ -280,6 +289,48 @@ public static class EasingUtility
         t = t <= 0.5f ? InSine(2 * t) : 2 - InSine(2 * t);
         return t;
     }
+    
+    public static float InSineAprox(float t)
+    {
+        t *= 0.5f;
+        float x2 = t * t;
+        float x4 = x2 * x2;
+        float x6 = x4 * x2;
+      
+        const float fa = 8.0f / 9.0f;
+        const float fb = 34.0f / 9.0f;
+        const float fc = 44.0f / 9.0f;
+      
+        t = fa * x6 - fb * x4 + fc * x2;
+        return t;
+    }
+    
+    public static float OutSineAprox(float t)
+    {
+        t = Invert(InSineAprox(Invert(t)));
+        return t;
+    }
+    
+    public static float InOutSineAprox(float t)
+    {
+        float x2 = t * t;
+        float x4 = x2 * x2;
+        float x6 = x4 * x2;
+      
+        const float fa = 4.0f / 9.0f;
+        const float fb = 17.0f / 9.0f;
+        const float fc = 22.0f / 9.0f;
+      
+        t = fa * x6 - fb * x4 + fc * x2;
+        return t;
+    }
+    
+    public static float SpikeSineAprox(float t)
+    {
+        t = t <= 0.5f ? InSineAprox(2 * t) : 2 - InSineAprox(2 * t);
+        return t;
+    }
+    
     #endregion
 
     #region Quad
