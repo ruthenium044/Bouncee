@@ -145,6 +145,18 @@ p = 3f * 1.65f (just because)
 <div style="page-break-after: always;"></div> <br /> <br />
 
 ## Back
+
+a = 1.70158f
+p = 1.75f (multiplier for the ease in out)
+p = 2f (for the spike)
+
+| Name  | Function                                                                                | Domain                                      | Graph                             |
+| ----- | --------------------------------------------------------------------------------------- | ------------------------------------------- | --------------------------------- |
+| In    | $f(x) = =(a + 1)x^3 - ax^2 $                                                            | $\{ 0 \le x \le 1\}$                        | <img src="./easeLong/40ease.png"> |
+| Out   | $f(x) = 1 - (a + 1)(1 - x)^3 + a(1 - x)^2$                                              | $\{ 0 \le x \le 1\}$                        | <img src="./easeLong/41ease.png"> |
+| InOut | $f(x) = (a + 1)(px)^3 - a(px)^2$ <br /> $g(x) = 1 - (a + 1) (p(1 - x))^3 - a(p(1-x))^2$ | $\{ 0 < x < 0.5\}$ <br /> $\{0.5 < x < 1\}$ | <img src="./easeLong/42ease.png"> |
+| Spike | $f(x) = (a + 1) (px)^3 - a(px)^2$ <br /> $g(x) = (a + 1) (p(1 - x))^3 - a(p(1 - x))^2$  | $\{ 0 < x < 0.5\}$ <br /> $\{0.5 < x < 1\}$ | <img src="./easeLong/43ease.png"> |
+
   
 Polynomial shaping:
 ## Inverted Cos
