@@ -1,34 +1,6 @@
 using System;
 using UnityEngine;
 
-public static class QuickMath
-{
-    public static unsafe uint AsInt(float f)
-    {
-        return *(uint*) &f; 
-    }
-    
-    public static unsafe float AsFloat(uint i)
-    {
-        return *(float*) &i; 
-    }
-
-    public static float Pow(float x, float p)
-    {
-        return AsFloat((uint)(p * (AsInt(x) - 1)) + 1) ;
-    }   
-    
-    public static unsafe float Qsqrt(float x)
-    {
-        float halfX = 0.5f * x;
-        int i = *(int*) &x;
-        i = 0x5f375a86 - (i >> 1);
-        x = *(float*) &i;
-        x = x * (1.5f - halfX * x * x);
-        return x;
-    }
-}
-
 public static class EasingUtility
 {
     public delegate float Function(float t);
@@ -48,12 +20,11 @@ public static class EasingUtility
     {
         Linear,
         Sine,
-        SineAprox,
         Quadratic,
         Cubic,
         Quartic,
         Quintic,
-        Exponetial,
+        Exponential,
         Circular,
         Bounce,
         Elastic,
@@ -86,8 +57,6 @@ public static class EasingUtility
                 return Linear;
             case Style.Sine:
                 return InSine;
-            case Style.SineAprox:
-                return InSineAprox;
             case Style.Quadratic:
                 return InQuad;
             case Style.Cubic:
@@ -96,7 +65,7 @@ public static class EasingUtility
                 return InQuart;
             case Style.Quintic:
                 return InQuint;
-            case Style.Exponetial:
+            case Style.Exponential:
                 return InExpo;
             case Style.Circular:
                 return InCircular;
@@ -122,8 +91,6 @@ public static class EasingUtility
                 return Linear;
             case Style.Sine:
                 return OutSine;
-            case Style.SineAprox:
-                return OutSineAprox;
             case Style.Quadratic:
                 return OutQuad;
             case Style.Cubic:
@@ -132,7 +99,7 @@ public static class EasingUtility
                 return OutQuart;
             case Style.Quintic:
                 return OutQuint;
-            case Style.Exponetial:
+            case Style.Exponential:
                 return OutExpo;
             case Style.Circular:
                 return OutCircular;
@@ -158,8 +125,6 @@ public static class EasingUtility
                 return Linear;
             case Style.Sine:
                 return InOutSine;
-            case Style.SineAprox:
-                return InOutSineAprox;
             case Style.Quadratic:
                 return InOutQuad;
             case Style.Cubic:
@@ -168,7 +133,7 @@ public static class EasingUtility
                 return InOutQuart;
             case Style.Quintic:
                 return InOutQuint;
-            case Style.Exponetial:
+            case Style.Exponential:
                 return InOutExpo;
             case Style.Circular:
                 return InOutCircular;
@@ -194,8 +159,6 @@ public static class EasingUtility
                 return SpikeLinear;
             case Style.Sine:
                 return SpikeSine;
-            case Style.SineAprox:
-                return SpikeSineAprox;
             case Style.Quadratic:
                 return SpikeQuad;
             case Style.Cubic:
@@ -204,7 +167,7 @@ public static class EasingUtility
                 return SpikeQuart;
             case Style.Quintic:
                 return SpikeQuint;
-            case Style.Exponetial:
+            case Style.Exponential:
                 return SpikeExpo;
             case Style.Circular:
                 return SpikeCircular;
@@ -264,11 +227,11 @@ public static class EasingUtility
         return t;
     }
     #endregion
-    
+
     #region Sine
     public static float InSine(float t)
     {
-        t = 1 - Mathf.Cos(t * Mathf.PI / 2);
+        t = 1 - QuickMath.CosPi(t * 0.5f);
         return t;
     }
 
@@ -289,48 +252,7 @@ public static class EasingUtility
         t = t <= 0.5f ? InSine(2 * t) : 2 - InSine(2 * t);
         return t;
     }
-    
-    public static float InSineAprox(float t)
-    {
-        t *= 0.5f;
-        float x2 = t * t;
-        float x4 = x2 * x2;
-        float x6 = x4 * x2;
-      
-        const float fa = 8.0f / 9.0f;
-        const float fb = 34.0f / 9.0f;
-        const float fc = 44.0f / 9.0f;
-      
-        t = fa * x6 - fb * x4 + fc * x2;
-        return t;
-    }
-    
-    public static float OutSineAprox(float t)
-    {
-        t = Invert(InSineAprox(Invert(t)));
-        return t;
-    }
-    
-    public static float InOutSineAprox(float t)
-    {
-        float x2 = t * t;
-        float x4 = x2 * x2;
-        float x6 = x4 * x2;
-      
-        const float fa = 4.0f / 9.0f;
-        const float fb = 17.0f / 9.0f;
-        const float fc = 22.0f / 9.0f;
-      
-        t = fa * x6 - fb * x4 + fc * x2;
-        return t;
-    }
-    
-    public static float SpikeSineAprox(float t)
-    {
-        t = t <= 0.5f ? InSineAprox(2 * t) : 2 - InSineAprox(2 * t);
-        return t;
-    }
-    
+
     #endregion
 
     #region Quad
