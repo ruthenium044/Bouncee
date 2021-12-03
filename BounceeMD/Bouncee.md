@@ -157,7 +157,9 @@ p = 3f * 1.65f (just because)
 ## Back
 
 a = 1.70158f
+
 p = 1.75f (multiplier for the ease in out)
+
 p = 2f (for the spike)
 
 | Name  | Function                                                                                | Domain                                      | Graph                             |
