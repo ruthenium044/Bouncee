@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class Spwan : MonoBehaviour
+public class DrawAllGraphs : MonoBehaviour
 {
     [SerializeField] private GameObject prefab;
     [SerializeField] private float padding;
