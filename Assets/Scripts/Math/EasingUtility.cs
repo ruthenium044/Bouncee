@@ -1,34 +1,6 @@
 using System;
 using UnityEngine;
 
-public static class QuickMath
-{
-    public static unsafe uint AsInt(float f)
-    {
-        return *(uint*) &f; 
-    }
-    
-    public static unsafe float AsFloat(uint i)
-    {
-        return *(float*) &i; 
-    }
-
-    public static float Pow(float x, float p)
-    {
-        return AsFloat((uint)(p * (AsInt(x) - 1)) + 1) ;
-    }   
-    
-    public static unsafe float Qsqrt(float x)
-    {
-        float halfX = 0.5f * x;
-        int i = *(int*) &x;
-        i = 0x5f375a86 - (i >> 1);
-        x = *(float*) &i;
-        x = x * (1.5f - halfX * x * x);
-        return x;
-    }
-}
-
 public static class EasingUtility
 {
     public delegate float Function(float t);
@@ -52,7 +24,7 @@ public static class EasingUtility
         Cubic,
         Quartic,
         Quintic,
-        Exponetial,
+        Exponential,
         Circular,
         Bounce,
         Elastic,
@@ -93,7 +65,7 @@ public static class EasingUtility
                 return InQuart;
             case Style.Quintic:
                 return InQuint;
-            case Style.Exponetial:
+            case Style.Exponential:
                 return InExpo;
             case Style.Circular:
                 return InCircular;
@@ -127,7 +99,7 @@ public static class EasingUtility
                 return OutQuart;
             case Style.Quintic:
                 return OutQuint;
-            case Style.Exponetial:
+            case Style.Exponential:
                 return OutExpo;
             case Style.Circular:
                 return OutCircular;
@@ -161,7 +133,7 @@ public static class EasingUtility
                 return InOutQuart;
             case Style.Quintic:
                 return InOutQuint;
-            case Style.Exponetial:
+            case Style.Exponential:
                 return InOutExpo;
             case Style.Circular:
                 return InOutCircular;
@@ -195,7 +167,7 @@ public static class EasingUtility
                 return SpikeQuart;
             case Style.Quintic:
                 return SpikeQuint;
-            case Style.Exponetial:
+            case Style.Exponential:
                 return SpikeExpo;
             case Style.Circular:
                 return SpikeCircular;
@@ -255,11 +227,11 @@ public static class EasingUtility
         return t;
     }
     #endregion
-    
+
     #region Sine
     public static float InSine(float t)
     {
-        t = 1 - Mathf.Cos(t * Mathf.PI / 2);
+        t = 1 - QuickMath.CosPi(t * 0.5f);
         return t;
     }
 
@@ -280,6 +252,7 @@ public static class EasingUtility
         t = t <= 0.5f ? InSine(2 * t) : 2 - InSine(2 * t);
         return t;
     }
+
     #endregion
 
     #region Quad
@@ -434,7 +407,7 @@ public static class EasingUtility
 
     public static float SpikeCircular(float t)
     {
-        t = t < 0.5f ? 1 - Mathf.Sqrt(1 - 4 * Mathf.Pow(t, 2)) : 1 - Mathf.Sqrt(1 - Mathf.Pow(2 * t - 2, 2));
+        t = t < 0.5f ? 1 - Mathf.Sqrt(1 - 4 * t * t) : 1 - Mathf.Sqrt(1 - (2 * t - 2) * (2 * t - 2));
         return t;
     }
     #endregion
@@ -494,7 +467,7 @@ public static class EasingUtility
         {
             return 1;
         }
-        t = - InQuad(t * amplitude) * Mathf.Sin((t - 0.75f) * tau * period);
+        t = - InQuad(t * amplitude) * QuickMath.SinPi((t - 0.75f) * 2 * period);
         return t;
     }
     

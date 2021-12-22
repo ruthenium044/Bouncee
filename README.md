@@ -1,4 +1,12 @@
-# Bouncee
+# Bouncee 🦝
+
+Easing library in progress
+
+The math document of all the functions: [:page_facing_up:](https://github.com/DeadMadman/Bouncee/blob/eb46ddae3406cadb2a822aff772c21cc1c8c971f/BounceeMD/Bouncee.pdf
+) 
+
+Implementation differs but the essence of those functions stays
+
 
 ## Structure
 
@@ -8,7 +16,21 @@ Easing curve styles (all groups have these):
 * Ease in out
 * Ease Spike
 
-Animation styles:
+Easing groups:
+* Linear
+* Sinusoidal
+* Quadratic
+* Cubic
+* Quartic
+* Quintic
+* Exponential
+* Circular
+* Bounce
+* Elastic
+* Back
+* More WIP
+
+Animation styles (WIP):
 * Repeat count or infinite
   * Loop
     * Forwards
@@ -17,9 +39,10 @@ Animation styles:
     * Forwards
     * Backwards
 
-Properties
+Properties that function with easing: 
 * Position
 * Rotation
 * Scale
 * Alpha
 * Gradients
+* Everything else

@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class Spwan : MonoBehaviour
+public class DrawAllGraphs : MonoBehaviour
 {
     [SerializeField] private GameObject prefab;
     [SerializeField] private float padding;
@@ -14,7 +14,7 @@ public class Spwan : MonoBehaviour
             {
                 GameObject temp = Instantiate(prefab, transform);
                 var offsetX = i * padding;
-                var offsetY = j * padding;
+                var offsetY = - j * padding;
                 temp.transform.position = new Vector3(transform.position.x + offsetX, transform.position.y + offsetY, transform.position.z);
                 
                 DrawGraph drawGraph = temp.GetComponent<DrawGraph>();
