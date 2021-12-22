@@ -10,8 +10,8 @@ public class TransformEase : MonoBehaviour
 	[System.Serializable]
 	public struct Signature
 	{
-		private Component context;
-		private MemberInfo valueMember;
+		[SerializeField] private Component context;
+		[SerializeField] private MemberInfo valueMember;
 
 		public Component Context => context;
 		public MemberInfo ValueMember => valueMember;
@@ -21,20 +21,23 @@ public class TransformEase : MonoBehaviour
 			this.context = context;
 			this.valueMember = member;
 		}
+
 	}
 
 	[System.Serializable]
 	public class EaseValue
 	{
-		public delegate object Lerp(object a, object b, float t);	
+		public delegate object Lerp(object a, object b, float t);
 
-		public object from;
-		public object to;
-		private Lerp lerp;
+		[SerializeField] public Signature signature;
+		[SerializeField] public object from;
+		[SerializeField] public object to;
+		[SerializeField] private Lerp lerp;
 
 
 		public EaseValue(Signature signature, System.Type type)
 		{
+			this.signature = signature;
 			var valueMember = signature.ValueMember;
 			var context = signature.Context;
 			this.lerp = GetLerp(type);
@@ -70,7 +73,7 @@ public class TransformEase : MonoBehaviour
 			throw new UnityException("Cannot find fitting lerp");
 		}
 
-		public void Update(Signature signature, float t)
+		public void Update(float t)
 		{
 			var valueMember = signature.ValueMember;
 			var context = signature.Context;
@@ -90,7 +93,7 @@ public class TransformEase : MonoBehaviour
 		}
 	}
 
-	private Dictionary<Signature, EaseValue> easeSet = new Dictionary<Signature, EaseValue>();
+	[SerializeField] private List<EaseValue> eases;
 
 	private void Awake()
 	{
@@ -99,8 +102,8 @@ public class TransformEase : MonoBehaviour
 
 	public void Evaluate(EaseData t)
 	{
-		foreach(var e in easeSet) {
-			e.Value.Update(e.Key, (float)t.Eased);
+		foreach(var e in eases) {
+			e.Update((float)t.Eased);
 		}
 	}
 

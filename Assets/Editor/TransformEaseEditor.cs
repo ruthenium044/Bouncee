@@ -156,41 +156,43 @@ public class TransformEaseEditor : Editor
 		}
 	}
 
-	private void CreateGenericMenu()
+	private void CreateGenericMenu(List<TransformEase.EaseValue> list)
 	{
 		menu = new GenericMenu();
 
-        var lookup = ease.GetType().GetField("easeSet", MemberFlags).GetValue(ease) as Dictionary<TransformEase.Signature, TransformEase.EaseValue>;
-        
-		foreach (var component in components) {
+        foreach (var component in components) {
 			foreach (var field in componentFields[component]) {
                 var signature = new TransformEase.Signature(component, field);
                 menu.AddItem(new GUIContent(FormatPath(component.GetType().Name, field.FieldType.Name, field.Name)),
-                                            lookup.ContainsKey(signature),
+                                            list.Find((item) => item.signature.Context == signature.Context &&
+                                                                item.signature.ValueMember == signature.ValueMember) != null,
 											(that) =>
 											{
-												if (lookup.ContainsKey(signature)) {
-                                                    lookup.Remove(signature);
-												}
-												else {
-                                                    lookup.Add(signature, 
-                                                               new TransformEase.EaseValue(signature, field.FieldType));
-												}
+                                                var item = list.Find((item) => item.signature.Context == signature.Context &&
+                                                                               item.signature.ValueMember == signature.ValueMember);
+                                                if (item != null) {
+                                                    list.Remove(item);
+                                                }
+                                                else {
+                                                    list.Add(new TransformEase.EaseValue(signature, field.FieldType));
+                                                }
 											}, field);
 
 			}
 			foreach (var property in componentProperties[component]) {
                 var signature = new TransformEase.Signature(component, property);
                 menu.AddItem(new GUIContent(FormatPath(component.GetType().Name, property.PropertyType.Name, property.Name)),
-                                            lookup.ContainsKey(signature),
+                                            list.Find((item) => item.signature.Context == signature.Context &&
+                                                                item.signature.ValueMember == signature.ValueMember) != null,
                                             (that) =>
                                             {
-                                                if (lookup.ContainsKey(signature)) {
-                                                    lookup.Remove(signature);
+                                                var item = list.Find((item) => item.signature.Context == signature.Context &&
+                                                                               item.signature.ValueMember == signature.ValueMember);
+                                                if (item != null) {
+                                                    list.Remove(item);
                                                 }
                                                 else {
-                                                    lookup.Add(signature,
-                                                               new TransformEase.EaseValue(signature, property.PropertyType));
+                                                    list.Add(new TransformEase.EaseValue(signature, property.PropertyType));
                                                 }
                                             }, property);
             }
@@ -199,7 +201,7 @@ public class TransformEaseEditor : Editor
 
 	private void OnDisable()
 	{
-
+        serializedObject.ApplyModifiedProperties();
     }
 
     private string FormatPath(string componentName, string typeName, string memberName)
@@ -219,8 +221,11 @@ public class TransformEaseEditor : Editor
     {
         base.OnInspectorGUI();
 
-        var lookup = ease.GetType().GetField("easeSet", MemberFlags).GetValue(ease) as Dictionary<TransformEase.Signature, TransformEase.EaseValue>;
-
+        var list = ease.GetType().GetField("eases", MemberFlags).GetValue(ease) as List<TransformEase.EaseValue>;
+        if (list == null) {
+            list = new List<TransformEase.EaseValue>();
+            ease.GetType().GetField("eases", MemberFlags).SetValue(ease, list);
+        }
         EditorGUILayout.Space(60.0f);
 
         const float removeWidth = 60.0f;
@@ -250,30 +255,29 @@ public class TransformEaseEditor : Editor
             return value;
         }
 
-        CreateGenericMenu();
-
-        TransformEase.Signature? remove = null;
-        foreach (var element in lookup) {
+        CreateGenericMenu(list);
+        TransformEase.EaseValue remove = null;
+        foreach (var element in list) {
             EditorGUILayout.BeginHorizontal();
             var style = GUILayout.MaxWidth(width);
 
             EditorGUILayout.BeginVertical();
             if (GUILayout.Button("X", GUILayout.MaxWidth(removeWidth))) {
-                remove = element.Key;
+                remove = element;
             }
             EditorGUILayout.EndVertical();
-
-            var context = element.Key.Context;
-            if (element.Key.ValueMember is FieldInfo) {
-                var field = element.Key.ValueMember as FieldInfo;
+            
+            var context = element.signature.Context;
+            if (element.signature.ValueMember is FieldInfo) {
+                var field = element.signature.ValueMember as FieldInfo;
                 EditorGUILayout.LabelField(new GUIContent(FormatPath(field.DeclaringType.Name,
                                                                      field.FieldType.Name,
                                                                      field.Name).
                                                                         Replace('/', ' ')),
                                            style);
             }
-            else if (element.Key.ValueMember is PropertyInfo) {
-                var property = element.Key.ValueMember as PropertyInfo;
+            else if (element.signature.ValueMember is PropertyInfo) {
+                var property = element.signature.ValueMember as PropertyInfo;
                 EditorGUILayout.LabelField(new GUIContent(FormatPath(property.DeclaringType.Name,
                                                                      property.PropertyType.Name,
                                                                      property.Name).
@@ -281,12 +285,12 @@ public class TransformEaseEditor : Editor
                                            style);
             }
             else { // ToString Fallback
-                EditorGUILayout.LabelField(new GUIContent(element.Key.ValueMember.ToString()), style);
+                EditorGUILayout.LabelField(new GUIContent(element.signature.ValueMember.ToString()), style);
             }
 
             EditorGUILayout.BeginVertical();
-            element.Value.from = DrawMemberValue("From: ", element.Value.from);
-            element.Value.to = DrawMemberValue("To: ", element.Value.to);
+            element.from = DrawMemberValue("From: ", element.from);
+            element.to = DrawMemberValue("To: ", element.to);
             EditorGUILayout.EndVertical();
 
             EditorGUILayout.EndHorizontal();
@@ -294,12 +298,15 @@ public class TransformEaseEditor : Editor
         }
 
         if (remove != null) {
-            lookup.Remove(remove.Value);
+            list.Remove(remove);
         }
 
         if (GUILayout.Button("Add Variable/Property")) {
             menu.ShowAsContext();
         }
+
+        serializedObject.ApplyModifiedProperties();
+
     }
 }
 
