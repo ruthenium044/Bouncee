@@ -19,7 +19,7 @@ public class TransformEase : MonoBehaviour
 		public Signature(Component context, MemberInfo member)
 		{
 			this.context = context;
-			this.valueMember = member;
+			valueMember = member;
 		}
 
 	}
@@ -44,13 +44,13 @@ public class TransformEase : MonoBehaviour
 
 			switch (valueMember.MemberType) {
 				case MemberTypes.Field:
-					this.from = (valueMember as FieldInfo).GetValue(context);
-					this.to = (valueMember as FieldInfo).GetValue(context);
+					from = (valueMember as FieldInfo)?.GetValue(context);
+					to = (valueMember as FieldInfo)?.GetValue(context);
 					break;
 
 				case MemberTypes.Property:
-					this.from = (valueMember as PropertyInfo).GetValue(context);
-					this.to = (valueMember as PropertyInfo).GetValue(context);
+					from = (valueMember as PropertyInfo)?.GetValue(context);
+					to = (valueMember as PropertyInfo)?.GetValue(context);
 					break;
 
 				default:
@@ -61,13 +61,13 @@ public class TransformEase : MonoBehaviour
 		private static Lerp GetLerp(System.Type type) 
 		{
 			if(type == typeof(Vector3)) {
-				return ((a, b, t) => Vector3.Lerp((Vector3)a, (Vector3)b, t));
+				return (a, b, t) => Vector3.Lerp((Vector3)a, (Vector3)b, t);
 			}
 			else if (type == typeof(Vector2)) {
-				return ((a, b, t) => Vector2.Lerp((Vector2)a, (Vector2)b, t));
+				return (a, b, t) => Vector2.Lerp((Vector2)a, (Vector2)b, t);
 			}
 			else if (type == typeof(float)) {
-				return ((a, b, t) => Mathf.Lerp((float)a, (float)b, t));
+				return (a, b, t) => Mathf.Lerp((float)a, (float)b, t);
 			}
 
 			throw new UnityException("Cannot find fitting lerp");
@@ -79,11 +79,11 @@ public class TransformEase : MonoBehaviour
 			var context = signature.Context;
 			switch (valueMember.MemberType) {
 				case MemberTypes.Field:
-					(valueMember as FieldInfo).SetValue(context, lerp(from, to, t));
+					(valueMember as FieldInfo)?.SetValue(context, lerp(from, to, t));
 					break;
 
 				case MemberTypes.Property:
-					(valueMember as PropertyInfo).SetValue(context, lerp(from, to, t));
+					(valueMember as PropertyInfo)?.SetValue(context, lerp(from, to, t));
 					break;
 
 				default:
@@ -127,8 +127,8 @@ public class TransformEase : MonoBehaviour
 	private void OnDrawGizmosSelected()
 	{
 		Gizmos.color = Color.green;
-
-
 		Gizmos.color = Color.red;
 	}
 }
+
+

@@ -12,10 +12,11 @@ public static class EasingUtility
         In,
         Out,
         InOut,
-        Spike,
-        Count
+        Spike
     }
-    
+
+    public static int ModeCount = (int) Mode.Spike + 1;
+
     public enum Style
     {
         Linear,
@@ -28,9 +29,10 @@ public static class EasingUtility
         Circular,
         Bounce,
         Elastic,
-        Back,
-        Count
+        Back
     }
+    
+    public static int StyleCount = (int) Style.Back + 1;
     
     public static Function GetFunction(Style style, Mode mode)
     {
@@ -75,8 +77,6 @@ public static class EasingUtility
                 return InElastic;
             case Style.Back:
                 return InBack;
-            case Style.Count:
-                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(style), style, null);
         }
@@ -109,8 +109,6 @@ public static class EasingUtility
                 return OutElastic;
             case Style.Back:
                 return OutBack;
-            case Style.Count:
-                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(style), style, null);
         }
@@ -143,8 +141,6 @@ public static class EasingUtility
                 return InOutElastic;
             case Style.Back:
                 return InOutBack;
-            case Style.Count:
-                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(style), style, null);
         }
@@ -177,8 +173,6 @@ public static class EasingUtility
                 return SpikeElastic;
             case Style.Back:
                 return SpikeBack;
-            case Style.Count:
-                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(style), style, null);
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using System.IO;
+using UnityEditor;
 
 [System.Serializable]
 public enum TimeMode
@@ -52,10 +53,11 @@ public class UnityEasingTimer
 	}
 
 	[SerializeField] private EasingUtility.Style easingStyle = EasingUtility.Style.Linear;
+	[SerializeField] private EasingUtility.Mode easingMode = EasingUtility.Mode.In;
 	[SerializeField] private TimeMode timeMode = TimeMode.Update;
-	[SerializeField] private double customDeltaTime = 0.0f;
-	[SerializeField] private double duration = 1.0;
+	[SerializeField] private double customDeltaTime = 0.0;
 	[SerializeField] private double speed = 1.0;
+	[SerializeField] private double duration = 1.0;
 	[SerializeField] private bool isReverse = false;
 	[SerializeField] private State state = State.Stopping; 
 	[SerializeField] private UnityEvent onStartUnityEvent;
@@ -354,6 +356,8 @@ public class UnityEasingTimer
 		}
 	}
 }
+
+
 
 public abstract class EaseController : MonoBehaviour
 {

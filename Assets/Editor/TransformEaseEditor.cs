@@ -221,10 +221,10 @@ public class TransformEaseEditor : Editor
     {
         base.OnInspectorGUI();
 
-        var list = ease.GetType().GetField("eases", MemberFlags).GetValue(ease) as List<TransformEase.EaseValue>;
+        var list = ease.GetType().GetField("eases", MemberFlags)?.GetValue(ease) as List<TransformEase.EaseValue>;
         if (list == null) {
             list = new List<TransformEase.EaseValue>();
-            ease.GetType().GetField("eases", MemberFlags).SetValue(ease, list);
+            ease.GetType().GetField("eases", MemberFlags)?.SetValue(ease, list);
         }
         EditorGUILayout.Space(60.0f);
 
@@ -262,7 +262,7 @@ public class TransformEaseEditor : Editor
             var style = GUILayout.MaxWidth(width);
 
             EditorGUILayout.BeginVertical();
-            if (GUILayout.Button("X", GUILayout.MaxWidth(removeWidth))) {
+            if (GUILayout.Button("delete", GUILayout.MaxWidth(removeWidth))) {
                 remove = element;
             }
             EditorGUILayout.EndVertical();
