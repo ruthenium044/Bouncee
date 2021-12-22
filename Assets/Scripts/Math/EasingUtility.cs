@@ -467,7 +467,7 @@ public static class EasingUtility
         {
             return 1;
         }
-        t = - InQuad(t * amplitude) * QuickMath.SinPi((t - 0.75f) * 2 * period);
+        t = - InQuad(t * amplitude) * Mathf.Sin((t - 0.75f) * Mathf.PI * 2 * period);
         return t;
     }
     
@@ -532,8 +532,7 @@ public static class EasingUtility
     #endregion \\Easing
     
     //Helper functions
-    private static float tau = 2f * Mathf.PI;
-    
+
     private static float Invert(float t)
     {
         return 1 - t;
