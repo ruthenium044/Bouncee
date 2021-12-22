@@ -128,7 +128,7 @@ MonoBehaviour:
   drawData: {fileID: 11400000, guid: 5f14f532b8135e84da1cd6367d116613, type: 2}
   points: []
   startPosition: {x: 0, y: -0.1}
-  endPosition: {x: 0, y: 1.1}
+  endPosition: {x: 0, y: 0.6}
 --- !u!1 &1630931446835369637
 GameObject:
   m_ObjectHideFlags: 0
@@ -176,7 +176,7 @@ MonoBehaviour:
   drawData: {fileID: 11400000, guid: ebd4b00b1293c984dbc594655fce7f3e, type: 2}
   points: []
   startPosition: {x: 0.5, y: -0.1}
-  endPosition: {x: 0.5, y: 1.1}
+  endPosition: {x: 0.5, y: 0.6}
 --- !u!1 &2617853528899639947
 GameObject:
   m_ObjectHideFlags: 0
@@ -234,9 +234,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8713956181456369964}
-  - component: {fileID: 163243432891401488}
+  - component: {fileID: 7021792675534017176}
   m_Layer: 0
-  m_Name: Graph
+  m_Name: GraphLong
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -259,7 +259,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &163243432891401488
+--- !u!114 &7021792675534017176
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -275,7 +275,6 @@ MonoBehaviour:
   points: []
   style: 0
   mode: 0
-  drawItself: 1
 --- !u!1 &7974050711826933896
 GameObject:
   m_ObjectHideFlags: 0
@@ -322,8 +321,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   drawData: {fileID: 11400000, guid: ebd4b00b1293c984dbc594655fce7f3e, type: 2}
   points: []
-  startPosition: {x: -0.1, y: 1}
-  endPosition: {x: 1.1, y: 1}
+  startPosition: {x: -0.1, y: 0.25}
+  endPosition: {x: 1.1, y: 0.25}
 --- !u!1 &8489602600858708710
 GameObject:
   m_ObjectHideFlags: 0
@@ -371,7 +370,7 @@ MonoBehaviour:
   drawData: {fileID: 11400000, guid: ebd4b00b1293c984dbc594655fce7f3e, type: 2}
   points: []
   startPosition: {x: 1, y: -0.1}
-  endPosition: {x: 1, y: 1.1}
+  endPosition: {x: 1, y: 0.6}
 --- !u!1 &9149450314819863966
 GameObject:
   m_ObjectHideFlags: 0
