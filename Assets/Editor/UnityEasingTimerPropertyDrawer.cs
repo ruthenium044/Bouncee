@@ -1,31 +1,33 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
-using UnityEditor.UIElements;
 using UnityEngine;
 
 [CustomPropertyDrawer(typeof(UnityEasingTimer))]
 public class UnityEasingTimerPropertyDrawer : PropertyDrawer
 {
+    private bool toggleDuration;
+    private bool toggleSpeed;
+    private static bool toggleLoop;
+    
+    private static List<Vector3> points = new List<Vector3>();
+
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
         //base.OnGUI(position, property, label);
         float labelWidth = 100;
         float fieldWidth = 40;
+        float graphWidth = 200;
         
+        //Easing
         GUILayout.Label("Easing", EditorStyles.boldLabel,GUILayout.Width(labelWidth));
+        EasingSection(property, labelWidth, fieldWidth);
         
-        GUILayout.BeginVertical(EditorStyles.helpBox);
-        EasingField(property, labelWidth);
-        TimeField(property, labelWidth, fieldWidth);
-        DurationField(property, labelWidth, fieldWidth);
-        GUILayout.EndVertical();
-        
+        //Animation
         GUILayout.Label("Animation", EditorStyles.boldLabel,GUILayout.Width(labelWidth));
-        
-        GUILayout.BeginVertical(EditorStyles.helpBox);
-        AnimationField(property, labelWidth);
-        GUILayout.EndVertical();
+        AnimationSection(property, labelWidth);
+
+        //Line
+        GraphSection(graphWidth);
 
         //todo what to do here later
         //State state = State.Stopping; 
@@ -34,61 +36,56 @@ public class UnityEasingTimerPropertyDrawer : PropertyDrawer
         //UnityEvent onEndUnityEvent;
         //List<TimedEvent> timePointUnityEvents = new List<TimedEvent>();
     }
-    
-    static void HorizontalLine ( Color color ) {
-        
-        EditorGUILayout.Space(10.0f);
-        
-        GUIStyle horizontalLine = new GUIStyle
-        {
-            normal =
-            {
-                background = EditorGUIUtility.whiteTexture
-            },
-            margin = new RectOffset( 0, 0, 4, 4 ),
-            fixedHeight = 1
-        };
 
-        var c = GUI.color;
-        GUI.color = color;
-        GUILayout.Box( GUIContent.none, horizontalLine );
-        GUI.color = c;
+    private static void GraphSection(float width)
+    {
+        GUILayout.BeginVertical(EditorStyles.helpBox, GUILayout.Width(width));
+        DrawLine(Color.green, width);
+        GUILayout.EndVertical();
+    }
+
+    private void EasingSection(SerializedProperty property, float labelWidth, float fieldWidth)
+    {
+        GUILayout.BeginVertical(EditorStyles.helpBox);
+        EasingField(property, labelWidth);
+        TimeField(property, labelWidth, fieldWidth);
+        (toggleDuration, toggleSpeed) = SpeedDurationField(property, labelWidth, fieldWidth, toggleDuration, toggleSpeed);
+        GUILayout.EndVertical();
     }
     
-    private static void AnimationField(SerializedProperty property, float width)
+    private static void AnimationSection(SerializedProperty property, float width)
     {
         var reverseProperty = property.FindPropertyRelative("isReverse");
-        int loopProperty;
+        var loopProperty = property.FindPropertyRelative("loop");
+        
+        GUILayout.BeginVertical(EditorStyles.helpBox);
         
         GUILayout.BeginHorizontal();
-        GUILayout.Label("Loop style", GUILayout.Width(width));
-        GUILayout.EndHorizontal();
-        
-        GUILayout.BeginHorizontal();
+        toggleLoop = EditorGUILayout.ToggleLeft("Looping", toggleLoop, GUILayout.Width(width));
         reverseProperty.boolValue = EditorGUILayout.ToggleLeft("Reverse", reverseProperty.boolValue, GUILayout.Width(width));
         GUILayout.EndHorizontal();
+        
+        if (toggleLoop)
+        {
+            GUILayout.Label("Loop style", GUILayout.Width(width));
+            //EasingUtility.Style style = (EasingUtility.Style) loopProperty.enumValueIndex;
+            //loopProperty.enumValueIndex = (int) (EasingUtility.Style) EditorGUILayout.EnumPopup(style);
+        }
+        GUILayout.EndVertical();   
     }
-
-    private static bool showDuration;
-    private static bool showSpeed;
     
-    private static void DurationField(SerializedProperty property, float width, float width2)
+    private static (bool showDuration, bool showSpeed) SpeedDurationField(SerializedProperty property, float width, float width2, bool showDuration, bool showSpeed)
     {
         var durationProperty = property.FindPropertyRelative("duration");
         var speedProperty = property.FindPropertyRelative("speed");
         
         GUILayout.BeginHorizontal();
-        showDuration = EditorGUILayout.ToggleLeft("Duration", showDuration, GUILayout.Width(width));
-        EditorGUI.BeginDisabledGroup(!showDuration);
-        durationProperty.doubleValue = EditorGUILayout.DoubleField(durationProperty.doubleValue, GUILayout.Width(width2));
-        EditorGUI.EndDisabledGroup();
         
-        showSpeed = EditorGUILayout.ToggleLeft("Speed", showSpeed, GUILayout.Width(width));
-        EditorGUI.BeginDisabledGroup(!showSpeed);
-        speedProperty.doubleValue = EditorGUILayout.DoubleField(speedProperty.doubleValue, GUILayout.Width(width2));
-        EditorGUI.EndDisabledGroup();
-        
+        showDuration = DrawToggleField("Duration", width, width2, showDuration, durationProperty);
+        showSpeed = DrawToggleField("Speed", width, width2, showSpeed, speedProperty);
+
         GUILayout.EndHorizontal();
+        return (showDuration, showSpeed);
     }
 
     private static void TimeField(SerializedProperty property, float width, float width2)
@@ -98,7 +95,6 @@ public class UnityEasingTimerPropertyDrawer : PropertyDrawer
         
         GUILayout.BeginHorizontal();
         GUILayout.Label("Time mode", GUILayout.Width(width));
-
         TimeMode timeMode = (TimeMode) timeModeProperty.enumValueIndex;
         timeModeProperty.enumValueIndex = (int) (TimeMode) EditorGUILayout.EnumPopup(timeMode);
         GUILayout.EndHorizontal();
@@ -118,6 +114,7 @@ public class UnityEasingTimerPropertyDrawer : PropertyDrawer
         var easingModeProperty = property.FindPropertyRelative("easingMode");
         
         GUILayout.BeginHorizontal();
+        
         GUILayout.Label("Easing", GUILayout.Width(width));
         EasingUtility.Style style = (EasingUtility.Style) easingStyleProperty.enumValueIndex;
         easingStyleProperty.enumValueIndex = (int) (EasingUtility.Style) EditorGUILayout.EnumPopup(style);
@@ -125,5 +122,37 @@ public class UnityEasingTimerPropertyDrawer : PropertyDrawer
         EasingUtility.Mode mode = (EasingUtility.Mode) easingModeProperty.enumValueIndex;
         easingModeProperty.enumValueIndex = (int) (EasingUtility.Mode) EditorGUILayout.EnumPopup(mode);
         GUILayout.EndHorizontal();
+    }
+    
+    private static bool DrawToggleField(string label, float width, float width2, bool showBool, SerializedProperty property)
+    {
+        showBool = EditorGUILayout.ToggleLeft(label, showBool, GUILayout.Width(width));
+        EditorGUI.BeginDisabledGroup(!showBool);
+        property.doubleValue = EditorGUILayout.DoubleField(property.doubleValue, GUILayout.Width(width2));
+        EditorGUI.EndDisabledGroup();
+        return showBool;
+    }
+
+    static void DrawLine ( Color color, float width )
+    {
+        int times = 300;
+        for (int i = 0; i < times; i++)
+        {
+            float t = i / (float) times;
+            float x = t;
+            //todo David how do i get the value here pls!!!!
+            float y = 1 - EasingUtility.InBounce(x);
+            points.Add(new Vector3(x * width, y * width * 0.5f, 0));
+        }
+ 
+        Rect rect = GUILayoutUtility.GetRect(10, width * 0.5f, width * 0.5f, width * 0.5f);
+        if (Event.current.type == EventType.Repaint)
+        {
+            GUI.BeginClip(rect);
+            
+            Handles.color = color;
+            Handles.DrawAAPolyLine(Texture2D.whiteTexture, 1, points.ToArray());
+            GUI.EndClip();
+        }
     }
 }
