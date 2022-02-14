@@ -14,9 +14,9 @@ public class SpawnBalls : MonoBehaviour
 
     private void Draw()
     {
-        for (int i = 0; i < (int) EasingUtility.StyleCount; i++)
+        for (int i = 0; i < EasingUtility.StyleCount; i++)
         {
-            for (int j = 0; j < (int) EasingUtility.ModeCount; j++)
+            for (int j = 0; j < EasingUtility.ModeCount; j++)
             {
                 GameObject temp = Instantiate(prefab, transform);
                 var offsetX = i * padding;
@@ -25,7 +25,9 @@ public class SpawnBalls : MonoBehaviour
                     transform.position.z);
 
                 DrawBall drawBall = temp.GetComponent<DrawBall>();
-                drawBall.SetValues(temp.transform.position, temp.transform.position - Vector3.down, i, j, 2);
+                drawBall.SetValues(temp.transform.position, 
+                    temp.transform.position - Vector3.down, 
+                                        i, j, 2);
                 StartCoroutine(drawBall.Draw());
             }
         }

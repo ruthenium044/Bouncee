@@ -1,3 +1,4 @@
+using System;
 using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
@@ -219,7 +220,8 @@ public class TransformEaseEditor : Editor
 
     public override void OnInspectorGUI()
     {
-        base.OnInspectorGUI();
+        //base.OnInspectorGUI();
+        DrawPropertiesExcluding(serializedObject, "m_Script");
 
         var list = ease.GetType().GetField("eases", MemberFlags)?.GetValue(ease) as List<TransformEase.EaseValue>;
         if (list == null) {
@@ -304,7 +306,6 @@ public class TransformEaseEditor : Editor
         if (GUILayout.Button("Add Variable/Property")) {
             menu.ShowAsContext();
         }
-
         serializedObject.ApplyModifiedProperties();
 
     }

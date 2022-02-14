@@ -9,14 +9,14 @@ public class UnityEasingTimerPropertyDrawer : PropertyDrawer
     private bool toggleSpeed;
     private static bool toggleLoop;
     
-    private static List<Vector3> points = new List<Vector3>();
+    private static readonly List<Vector3> points = new List<Vector3>();
 
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
         //base.OnGUI(position, property, label);
         float labelWidth = 100;
         float fieldWidth = 40;
-        float graphWidth = 200;
+        float graphWidth = 300;
         
         //Easing
         GUILayout.Label("Easing", EditorStyles.boldLabel,GUILayout.Width(labelWidth));
@@ -28,7 +28,7 @@ public class UnityEasingTimerPropertyDrawer : PropertyDrawer
 
         //Line
         GraphSection(graphWidth);
-
+        
         //todo what to do here later
         //State state = State.Stopping; 
         //UnityEvent onStartUnityEvent;
@@ -115,6 +115,7 @@ public class UnityEasingTimerPropertyDrawer : PropertyDrawer
         
         GUILayout.BeginHorizontal();
         
+        
         GUILayout.Label("Easing", GUILayout.Width(width));
         EasingUtility.Style style = (EasingUtility.Style) easingStyleProperty.enumValueIndex;
         easingStyleProperty.enumValueIndex = (int) (EasingUtility.Style) EditorGUILayout.EnumPopup(style);
@@ -133,25 +134,27 @@ public class UnityEasingTimerPropertyDrawer : PropertyDrawer
         return showBool;
     }
 
-    static void DrawLine ( Color color, float width )
+    static void DrawLine (Color color, float width)
     {
-        int times = 300;
+        int times = 100;
         for (int i = 0; i < times; i++)
         {
             float t = i / (float) times;
             float x = t;
+            
             //todo David how do i get the value here pls!!!!
             float y = 1 - EasingUtility.InBounce(x);
-            points.Add(new Vector3(x * width, y * width * 0.5f, 0));
+            
+            points.Add(new Vector3(x * width, y * width * 0.25f + width * 0.2f, 0));
         }
  
-        Rect rect = GUILayoutUtility.GetRect(10, width * 0.5f, width * 0.5f, width * 0.5f);
+        Rect rect = GUILayoutUtility.GetRect(10, width * 0.5f, 
+                                            width * 0.25f, width * 0.65f);
         if (Event.current.type == EventType.Repaint)
         {
             GUI.BeginClip(rect);
-            
             Handles.color = color;
-            Handles.DrawAAPolyLine(Texture2D.whiteTexture, 1, points.ToArray());
+            Handles.DrawLines(points.ToArray());
             GUI.EndClip();
         }
     }

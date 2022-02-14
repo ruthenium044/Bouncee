@@ -80,7 +80,6 @@ public static class EasingUtility
             default:
                 throw new ArgumentOutOfRangeException(nameof(style), style, null);
         }
-        return null;
     }
     
     private static Function GetOut(Style style)
@@ -112,7 +111,6 @@ public static class EasingUtility
             default:
                 throw new ArgumentOutOfRangeException(nameof(style), style, null);
         }
-        return null;
     }
     
     private static Function GetInOut(Style style)
@@ -144,7 +142,6 @@ public static class EasingUtility
             default:
                 throw new ArgumentOutOfRangeException(nameof(style), style, null);
         }
-        return null;
     }
     
     private static Function GetSpike(Style style)
@@ -176,7 +173,6 @@ public static class EasingUtility
             default:
                 throw new ArgumentOutOfRangeException(nameof(style), style, null);
         }
-        return null;
     }
     
     #endregion
