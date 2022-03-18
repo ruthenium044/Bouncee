@@ -5,7 +5,8 @@ using UnityEngine;
 public class SpawnBalls : MonoBehaviour
 {
     [SerializeField] private GameObject prefab;
-    [SerializeField] private float padding;
+    [SerializeField] private float paddingX;
+    [SerializeField] private float paddingY;
     
     void Start()
     {
@@ -19,8 +20,8 @@ public class SpawnBalls : MonoBehaviour
             for (int j = 0; j < EasingUtility.ModeCount; j++)
             {
                 GameObject temp = Instantiate(prefab, transform);
-                var offsetX = i * padding;
-                var offsetY = -j * padding;
+                var offsetX = i * paddingX;
+                var offsetY = -j * paddingY;
                 temp.transform.position = new Vector3(transform.position.x + offsetX, transform.position.y + offsetY,
                     transform.position.z);
 
