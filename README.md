@@ -2,10 +2,11 @@
 
 Easing library in progress
 
-The math document of all the functions: [:page_facing_up:](https://github.com/DeadMadman/Bouncee/blob/eb46ddae3406cadb2a822aff772c21cc1c8c971f/BounceeMD/Bouncee.pdf
-) 
+The math document of all the functions: [:page_facing_up:](https://github.com/DeadMadman/Bouncee/blob/eb46ddae3406cadb2a822aff772c21cc1c8c971f/BounceeMD/Bouncee.pdf) 
 
 Implementation differs but the essence of those functions stays
+
+https://user-images.githubusercontent.com/31730144/158993522-2a5db2ef-cb36-4998-b70d-5dcee2349b9c.mp4
 
 
 ## Structure
