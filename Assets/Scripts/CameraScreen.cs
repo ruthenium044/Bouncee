@@ -6,10 +6,25 @@ public class CameraScreen : MonoBehaviour
 {
     [SerializeField] private Transform spwaner;
     [SerializeField] private Vector2 offset;
+    private Vector3 camPos;
+    
+    [SerializeField] private float timeBeforeSwitch = 2;
+    [SerializeField] private float timeToSwitch = 2;
+    
+    
+    [SerializeField] private bool StripCam = false;
     
     void Start()
     {
-        StartCoroutine(RunAll());
+        camPos = transform.position;
+        if (StripCam)
+        {
+            StartCoroutine(RunStrips());
+        }
+        else
+        {
+            StartCoroutine(RunAll());
+        }
     }
 
     IEnumerator RunAll()
@@ -23,7 +38,20 @@ public class CameraScreen : MonoBehaviour
             UnityEditor.AssetDatabase.Refresh();
             i++;
             Debug.Log("Here");
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(2f);
+        }
+    }
+    
+    IEnumerator RunStrips()
+    {
+        yield return new WaitForSeconds(timeBeforeSwitch);
+        float i = 0;
+        foreach(Transform child in spwaner)
+        {
+            transform.position = new Vector3(camPos.x, child.position.y + offset.y, transform.position.z);
+            Debug.Log("Here");
+            yield return new WaitForSeconds(timeToSwitch);
+            i++;
         }
     }
 

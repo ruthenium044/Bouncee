@@ -6,6 +6,7 @@ public class DrawAllGraphs : MonoBehaviour
     [SerializeField] private GameObject prefab;
     [SerializeField] private float paddingX;
     [SerializeField] private float paddingY;
+    [SerializeField] private bool vertical = false;
     
     void Start()
     {
@@ -14,9 +15,9 @@ public class DrawAllGraphs : MonoBehaviour
 
     private void DrawGraphs()
     {
-        for (int i = 0; i < (int) EasingUtility.StyleCount; i++)
+        for (int i = 0; i < (vertical ? (int) EasingUtility.StyleCount :  (int) EasingUtility.ModeCount); i++)
         {
-            for (int j = 0; j < (int) EasingUtility.ModeCount; j++)
+            for (int j = 0; j < (vertical ? (int) EasingUtility.ModeCount : (int) EasingUtility.StyleCount); j++)
             {
                 GameObject temp = Instantiate(prefab, transform);
                 var offsetX = i * paddingX;
@@ -26,7 +27,7 @@ public class DrawAllGraphs : MonoBehaviour
 
                 DrawGraph drawGraph = temp.GetComponent<DrawGraph>();
                 drawGraph.drawItself = false;
-                drawGraph.Draw(drawGraph, i, j);
+                drawGraph.Draw(drawGraph, (vertical ? i : j), (vertical ? j : i));
             }
         }
     }

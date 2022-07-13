@@ -7,6 +7,7 @@ public class SpawnBalls : MonoBehaviour
     [SerializeField] private GameObject prefab;
     [SerializeField] private float paddingX;
     [SerializeField] private float paddingY;
+    [SerializeField] private bool vertical = false;
     
     void Start()
     {
@@ -15,9 +16,9 @@ public class SpawnBalls : MonoBehaviour
 
     private void Draw()
     {
-        for (int i = 0; i < EasingUtility.StyleCount; i++)
+        for (int i = 0; i < (vertical ? EasingUtility.StyleCount : EasingUtility.ModeCount); i++)
         {
-            for (int j = 0; j < EasingUtility.ModeCount; j++)
+            for (int j = 0; j < (vertical ? EasingUtility.ModeCount : EasingUtility.StyleCount); j++)
             {
                 GameObject temp = Instantiate(prefab, transform);
                 var offsetX = i * paddingX;
@@ -28,7 +29,7 @@ public class SpawnBalls : MonoBehaviour
                 DrawBall drawBall = temp.GetComponent<DrawBall>();
                 drawBall.SetValues(temp.transform.position, 
                     temp.transform.position - Vector3.down, 
-                                        i, j, 2);
+                    (vertical ? i : j), (vertical ? j : i), 1);
                 StartCoroutine(drawBall.Draw());
             }
         }
