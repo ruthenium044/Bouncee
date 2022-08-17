@@ -221,7 +221,7 @@ public class TransformEaseEditor : Editor
     public override void OnInspectorGUI()
     {
         //base.OnInspectorGUI();
-        DrawPropertiesExcluding(serializedObject, "m_Script");
+        DrawPropertiesExcluding(serializedObject);
 
         var list = ease.GetType().GetField("eases", MemberFlags)?.GetValue(ease) as List<TransformEase.EaseValue>;
         if (list == null) {

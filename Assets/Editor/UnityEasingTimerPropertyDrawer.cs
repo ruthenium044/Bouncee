@@ -16,7 +16,8 @@ public class UnityEasingTimerPropertyDrawer : PropertyDrawer
         //base.OnGUI(position, property, label);
         float labelWidth = 100;
         float fieldWidth = 40;
-        float graphWidth = 300;
+        float graphHeight = 300;
+        float graphWidth = position.width;
         
         //Easing
         GUILayout.Label("Easing", EditorStyles.boldLabel,GUILayout.Width(labelWidth));
@@ -27,7 +28,7 @@ public class UnityEasingTimerPropertyDrawer : PropertyDrawer
         AnimationSection(property, labelWidth);
 
         //Line
-        GraphSection(graphWidth);
+        GraphSection(property, graphHeight, graphWidth);
         
         //todo what to do here later
         //State state = State.Stopping; 
@@ -37,10 +38,10 @@ public class UnityEasingTimerPropertyDrawer : PropertyDrawer
         //List<TimedEvent> timePointUnityEvents = new List<TimedEvent>();
     }
 
-    private static void GraphSection(float width)
+    private static void GraphSection(SerializedProperty property, float height, float width)
     {
-        GUILayout.BeginVertical(EditorStyles.helpBox, GUILayout.Width(width));
-        DrawLine(Color.green, width);
+        GUILayout.BeginVertical(EditorStyles.helpBox);
+        DrawLine(property, Color.green, height, width);
         GUILayout.EndVertical();
     }
 
@@ -134,26 +135,51 @@ public class UnityEasingTimerPropertyDrawer : PropertyDrawer
         return showBool;
     }
 
-    static void DrawLine (Color color, float width)
+    static void DrawLine (SerializedProperty property, Color color, float height, float width)
     {
+        var easingStyleProperty = property.FindPropertyRelative("easingStyle");
+        var easingModeProperty = property.FindPropertyRelative("easingMode");
+        var durationProperty = property.FindPropertyRelative("duration");
+        var speedProperty = property.FindPropertyRelative("speed");
+
+        var duration = durationProperty.doubleValue;
+        var speed = speedProperty.doubleValue;
+        EasingUtility.Style style = (EasingUtility.Style)easingStyleProperty.enumValueIndex;
+        EasingUtility.Mode mode = (EasingUtility.Mode)easingModeProperty.enumValueIndex;
+        points.Clear();
+
         int times = 100;
-        for (int i = 0; i < times; i++)
+        float durationMs = (float)duration * 1000;
+        for (int i = 0; i < times; i += 1)
         {
             float t = i / (float) times;
             float x = t;
-            
+
             //todo David how do i get the value here pls!!!!
-            float y = 1 - EasingUtility.InBounce(x);
-            
-            points.Add(new Vector3(x * width, y * width * 0.25f + width * 0.2f, 0));
+            var func = EasingUtility.GetFunction(style, mode);
+            float y = 1 - func(x);
+
+            points.Add(new Vector3(x * width, (y * (height * 0.5f) + height * 0.05f), 0));
         }
- 
-        Rect rect = GUILayoutUtility.GetRect(10, width * 0.5f, 
-                                            width * 0.25f, width * 0.65f);
+        Rect rect = GUILayoutUtility.GetRect(10, width - 10,
+                                            height * 0.65f, height * 0.65f);
+        Rect bounds = rect;//GUILayoutUtility.GetLastRect();
+        
+        float bound = (int)System.Math.Floor(duration / speed);
+        float fraction = (bounds.max.x - bounds.min.x) / bound;
+        for (int i = 0; i <= (int)bound; i++) {
+            Handles.color = Color.black;
+            float offset = fraction * i;
+            var start = new Vector3(bounds.min.x + offset, bounds.min.y, 0);
+            var end = new Vector3(bounds.min.x + offset, bounds.max.y, 0);
+            Handles.DrawLine(start, end);
+        }
+        
         if (Event.current.type == EventType.Repaint)
         {
             GUI.BeginClip(rect);
             Handles.color = color;
+
             Handles.DrawLines(points.ToArray());
             GUI.EndClip();
         }

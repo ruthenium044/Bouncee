@@ -93,18 +93,18 @@ public class TransformEase : MonoBehaviour
 		}
 	}
 
-	[SerializeField] private List<EaseValue> eases;
+	//[SerializeField] private List<EaseValue> eases;
 
 	private void Awake()
 	{
-		timer.Start(this);
+		this.timer.Start(this);
 	}
 
 	public void Evaluate(EaseData t)
 	{
-		foreach(var e in eases) {
-			e.Update((float)t.Eased);
-		}
+		//foreach(var e in eases) {
+		//	e.Update((float)t.Eased);
+		//}
 	}
 
 
